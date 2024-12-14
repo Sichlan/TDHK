@@ -1,0 +1,34 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ui="http://schemas.modernwpf.com/2019"
+                    xmlns:presets="clr-namespace:TDHK.ModernUi.Themes.Presets">
+    <ResourceDictionary.MergedDictionaries>
+        <ui:ThemeResources CanBeAccessedAcrossThreads="True">
+            <ui:ThemeResources.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light" ui:ThemeDictionary.Key="Light">
+                    <ResourceDictionary.MergedDictionaries>
+                        <presets:ColorPresetResources TargetTheme="Light" />
+                        <presets:ShapePresetResources />
+                    </ResourceDictionary.MergedDictionaries>
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
+                    <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
+                    <SolidColorBrush x:Key="CustomThemeBrush" Color="Red" />
+                </ResourceDictionary>
+
+                <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
+                    <ResourceDictionary.MergedDictionaries>
+                        <presets:ColorPresetResources TargetTheme="Dark" />
+                        <presets:ShapePresetResources />
+                    </ResourceDictionary.MergedDictionaries>
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FF232323" />
+                    <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FF282828" />
+                    <SolidColorBrush x:Key="CustomThemeBrush" Color="Red" />
+                </ResourceDictionary>
+            </ui:ThemeResources.ThemeDictionaries>
+        </ui:ThemeResources>
+        
+        <ui:XamlControlsResources />
+        
+        <ResourceDictionary Source="Converters.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

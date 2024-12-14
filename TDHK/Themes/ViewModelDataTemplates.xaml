@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:userViewModels="clr-namespace:TDHK.ModernUi.ViewModels.Users"
+                    xmlns:users="clr-namespace:TDHK.ModernUi.Views.Users">
+    <DataTemplate DataType="{x:Type userViewModels:UserMessageViewModel}">
+        <users:UserMessageView />
+    </DataTemplate>
+</ResourceDictionary>

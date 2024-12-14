@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="TDHK.ModernUi.Views.Users.UserMessageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviours="clr-namespace:TDHK.ModernUi.Helpers.Behaviours"
+             xmlns:users1="clr-namespace:TDHK.ModernUi.ViewModels.Users"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance users1:UserMessageViewModel}"
+             Background="Transparent" Margin="2">
+    <Border BorderThickness="0" CornerRadius="2" Style="{StaticResource BorderStyle}">
+        <b:Interaction.Triggers>
+            <b:EventTrigger EventName="MouseEnter">
+                <b:InvokeCommandAction Command="{Binding PauseTimerCommand}"/>
+            </b:EventTrigger>
+            <b:EventTrigger EventName="MouseLeave">
+                <b:InvokeCommandAction Command="{Binding UnpauseTimerCommand}"/>
+            </b:EventTrigger>
+        </b:Interaction.Triggers>
+        
+        <Grid Margin="2" Width="300">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="{Binding MessageHeader}" Margin="2, 2, 2, 0" 
+                           VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontWeight="SemiBold"/>
+                <Button Grid.Column="1" Command="{Binding RemoveMessageCommand}" fa:Awesome.Content="Close"
+                        Margin="2, 2, 2, 0" FontSize="12" VerticalAlignment="Center" Style="{StaticResource UserMessageButtonStyle}"/>
+            </Grid>
+            
+            <StackPanel Grid.Row="1">
+                <StackPanel.Style>
+                    <Style TargetType="{x:Type StackPanel}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding MessageContent}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                
+                <TextBlock x:Name="TextMessageDetails" Text="{Binding MessageContent}" 
+                           Visibility="Collapsed" Margin="2,0" Style="{StaticResource TextBlockStyle}"
+                           TextWrapping="Wrap"/>
+                <Button Content="Show Details" Margin="2,0" FontSize="10" Padding="2" Click="ButtonDetailsOnClick" 
+                        Style="{StaticResource UserMessageButtonStyle}"/>
+            </StackPanel>
+            
+            <ProgressBar Grid.Row="2" Minimum="0" Style="{StaticResource UserMessageProgressBarStyle}"
+                         Maximum="{Binding DeleteAfter}"
+                         Value="{Binding TimeRemaining, Mode=OneWay}"
+                         FlowDirection="RightToLeft">
+                <b:Interaction.Behaviors>
+                    <behaviours:ProgressBarAnimationBehaviour AnimationDuration="90"/>
+                </b:Interaction.Behaviors>
+            </ProgressBar>
+        </Grid></Border>
+</UserControl>
