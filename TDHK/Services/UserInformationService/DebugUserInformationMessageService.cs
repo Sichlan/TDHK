@@ -6,6 +6,8 @@ using TDHK.ModernUi.ViewModels.Users;
 namespace TDHK.ModernUi.Services.UserInformationService;
 
 /// <inheritdoc/>
+// Used for debug purposes, otherwise not used.
+// ReSharper disable once UnusedType.Global
 public class DebugUserInformationMessageService : IUserInformationMessageService
 {
     public ObservableCollection<UserMessageViewModel> UserMessageViewModels { get; } = new();
@@ -28,7 +30,5 @@ public class DebugUserInformationMessageService : IUserInformationMessageService
     /// <inheritdoc/>
     /// This method does nothing because this service does not have a functioning message queue.
     public void RemoveDisplayMessage(UserMessageViewModel message)
-    {
-        return;
-    }
+    { }
 }

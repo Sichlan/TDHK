@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows;
-using ModernWpf.Controls;
+﻿using System.Windows;
 using TDHK.ModernUi.ViewModels;
 
 namespace TDHK.ModernUi.Views
@@ -10,20 +8,11 @@ namespace TDHK.ModernUi.Views
     /// </summary>
     public partial class MainWindow
     {
-        private readonly MainViewModel _mainViewModel;
-
         public MainWindow(MainViewModel dataContext)
         {
             InitializeComponent();
 
-            _mainViewModel = dataContext;
-
-            DataContext = _mainViewModel;
-        }
-
-        private Type GetPageType(NavigationViewItem item)
-        {
-            return item.Tag as Type;
+            DataContext = dataContext;
         }
 
         private void MainWindow_OnSizeChanged(object sender, SizeChangedEventArgs e)

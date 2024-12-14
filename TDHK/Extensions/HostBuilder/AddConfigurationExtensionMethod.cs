@@ -3,11 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TDHK.ModernUi.Views;
 
-namespace TDHK.ModernUi.ExtensionMethods.HostBuilder;
+namespace TDHK.ModernUi.Extensions.HostBuilder;
 
 public static class AddConfigurationExtensionMethod
 {
-    public static IHostBuilder AddConfiguration(this IHostBuilder hostBuilder, string[]? args)
+    public static IHostBuilder AddConfiguration(this IHostBuilder hostBuilder, string[] args)
     {
         hostBuilder.ConfigureHostConfiguration(builder =>
             {

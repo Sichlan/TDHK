@@ -31,7 +31,7 @@ public abstract class BaseViewModel : INotifyPropertyChanged, INotifyDataErrorIn
     #region INotifyPropertyChanged
 
     /// <inheritdoc />
-    public event PropertyChangedEventHandler? PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
 
     /// <summary>
     /// A method to trigger the <see cref="PropertyChanged"/> event. Most of the time called in property setters.
@@ -160,7 +160,7 @@ public abstract class BaseViewModel : INotifyPropertyChanged, INotifyDataErrorIn
     public bool HasErrors => _propertyErrors.Values.Any(l => l.Count > 0);
 
     /// <inheritdoc />
-    public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+    public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
     #endregion
 }

@@ -5,7 +5,7 @@ using TDHK.ModernUi.Services.UserInformationService;
 using TDHK.ModernUi.ViewModels;
 using TDHK.ModernUi.ViewModels.Users;
 
-namespace TDHK.ModernUi.ExtensionMethods.HostBuilder;
+namespace TDHK.ModernUi.Extensions.HostBuilder;
 
 public static class AddViewModelsExtensionMethod
 {

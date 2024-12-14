@@ -45,7 +45,7 @@ public class ViewModelUserInformationMessageService : IUserInformationMessageSer
 
     private void QueueTask(Func<Task> nextTask)
     {
-        _updateTask = _updateTask.ContinueWith(t => nextTask()).Unwrap();
+        _updateTask = _updateTask.ContinueWith(_ => nextTask()).Unwrap();
     }
 
     ~ViewModelUserInformationMessageService()

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using TDHK.ModernUi.Services.UserInformationService;
 
-namespace TDHK.ModernUi.ExtensionMethods.HostBuilder;
+namespace TDHK.ModernUi.Extensions.HostBuilder;
 
 public static class AddServicesExtensionMethods
 {

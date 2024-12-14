@@ -11,7 +11,7 @@
                         <presets:ShapePresetResources />
                     </ResourceDictionary.MergedDictionaries>
                     <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
-                    <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
+                    <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{DynamicResource SystemAltHighColor}" />
                     <SolidColorBrush x:Key="CustomThemeBrush" Color="Red" />
                 </ResourceDictionary>
 

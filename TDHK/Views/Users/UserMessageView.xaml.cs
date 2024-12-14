@@ -1,9 +1,8 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 
 namespace TDHK.ModernUi.Views.Users;
 
-public partial class UserMessageView : UserControl
+public partial class UserMessageView
 {
     public UserMessageView()
     {

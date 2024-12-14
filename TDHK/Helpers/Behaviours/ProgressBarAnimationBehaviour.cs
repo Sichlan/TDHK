@@ -9,7 +9,7 @@ namespace TDHK.ModernUi.Helpers.Behaviours;
 
 public class ProgressBarAnimationBehaviour : Behavior<ProgressBar>
 {
-    private bool _isAnimating = false;
+    private bool _isAnimating;
 
     public double AnimationDuration { get; set; }
 

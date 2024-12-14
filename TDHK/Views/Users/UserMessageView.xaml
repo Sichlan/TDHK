@@ -10,7 +10,7 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance users1:UserMessageViewModel}"
              Background="Transparent" Margin="2">
-    <Border BorderThickness="0" CornerRadius="2" Style="{StaticResource BorderStyle}">
+    <Border BorderThickness="0" CornerRadius="2" Style="{DynamicResource BorderStyle}">
         <b:Interaction.Triggers>
             <b:EventTrigger EventName="MouseEnter">
                 <b:InvokeCommandAction Command="{Binding PauseTimerCommand}"/>
@@ -34,9 +34,9 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Text="{Binding MessageHeader}" Margin="2, 2, 2, 0" 
-                           VerticalAlignment="Center" Style="{StaticResource TextBlockStyle}" FontWeight="SemiBold"/>
+                           VerticalAlignment="Center" Style="{DynamicResource TextBlockStyle}" FontWeight="SemiBold"/>
                 <Button Grid.Column="1" Command="{Binding RemoveMessageCommand}" fa:Awesome.Content="Close"
-                        Margin="2, 2, 2, 0" FontSize="12" VerticalAlignment="Center" Style="{StaticResource UserMessageButtonStyle}"/>
+                        Margin="2, 2, 2, 0" FontSize="12" VerticalAlignment="Center" Style="{DynamicResource UserMessageButtonStyle}"/>
             </Grid>
             
             <StackPanel Grid.Row="1">
@@ -51,13 +51,13 @@
                 </StackPanel.Style>
                 
                 <TextBlock x:Name="TextMessageDetails" Text="{Binding MessageContent}" 
-                           Visibility="Collapsed" Margin="2,0" Style="{StaticResource TextBlockStyle}"
+                           Visibility="Collapsed" Margin="2,0" Style="{DynamicResource TextBlockStyle}"
                            TextWrapping="Wrap"/>
                 <Button Content="Show Details" Margin="2,0" FontSize="10" Padding="2" Click="ButtonDetailsOnClick" 
-                        Style="{StaticResource UserMessageButtonStyle}"/>
+                        Style="{DynamicResource UserMessageButtonStyle}"/>
             </StackPanel>
             
-            <ProgressBar Grid.Row="2" Minimum="0" Style="{StaticResource UserMessageProgressBarStyle}"
+            <ProgressBar Grid.Row="2" Minimum="0" Style="{DynamicResource UserMessageProgressBarStyle}"
                          Maximum="{Binding DeleteAfter}"
                          Value="{Binding TimeRemaining, Mode=OneWay}"
                          FlowDirection="RightToLeft">

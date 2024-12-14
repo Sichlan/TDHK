@@ -2,7 +2,7 @@
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TDHK.ModernUi.ExtensionMethods.HostBuilder;
+using TDHK.ModernUi.Extensions.HostBuilder;
 using TDHK.ModernUi.Views;
 
 namespace TDHK.ModernUi
@@ -14,7 +14,7 @@ namespace TDHK.ModernUi
     {
         private IHost _host = null!;
 
-        private static IHostBuilder CreateHostBuilder(string[]? args = null)
+        private static IHostBuilder CreateHostBuilder(string[] args = null)
         {
             return Host.CreateDefaultBuilder(args)
                 .AddConfiguration(args)
