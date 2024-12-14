@@ -66,7 +66,7 @@ public class Character : ObservableObject
             OnPropertyChanged(nameof(Danmaku));
             OnPropertyChanged(nameof(Dodge));
             OnPropertyChanged(nameof(Ability));
-            OnPropertyChanged(nameof(Speed));
+            OnPropertyChanged(nameof(Movement));
             OnPropertyChanged(nameof(MaxHitPoints));
             OnPropertyChanged(nameof(Lives));
         }
@@ -244,12 +244,12 @@ public class Character : ObservableObject
     [JsonIgnore]
     public int Danmaku => GetAbilityValueFromShortName(DanmakuProperty);
     [JsonIgnore]
-    public int Dodge => GetAbilityValueFromShortName(DodgeProperty) + Reflex / 2;
+    public int Dodge => (GetAbilityValueFromShortName(DodgeProperty) + Reflex) / 2 + (Race == Race.Inchling ? 1 : 0);
     [JsonIgnore]
     public int Ability => (GetAbilityValueFromShortName(AbilityProperty) + Style) / 2;
 
     [JsonIgnore]
-    public int Speed =>
+    public int Movement =>
         (Race?.MovementRange).GetValueOrDefault();
 
     public int HitPoints

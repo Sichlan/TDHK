@@ -222,7 +222,7 @@
                     <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource StatTextBlockStyle}"
                                Text="{Binding CurrentCharacter.Ability, FallbackValue=ABI 0, StringFormat={}ABI {0}}" />
                     <TextBlock Grid.Row="5" Grid.Column="2" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Speed, FallbackValue=SPD 0, StringFormat={}SPD {0}}" />
+                               Text="{Binding CurrentCharacter.Movement, FallbackValue=MOV 0, StringFormat={}MOV {0}}" />
                     <ComboBox Grid.Row="4" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
                               ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
                               SelectedItem="{Binding CurrentCharacter.DanmakuProperty}"

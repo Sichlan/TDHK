@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Color x:Key="RegionColor">#FF000000</Color>
+    <Color x:Key="RegionColor">#FF1e1f22</Color>
     <SolidColorBrush x:Key="RegionBrush" Color="{StaticResource RegionColor}" />
+    <SolidColorBrush x:Key="SystemControlPageBackgroundAltHighBrush" Color="{StaticResource RegionColor}" />
 </ResourceDictionary>
