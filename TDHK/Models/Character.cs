@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace TDHK.ModernUi.Models;
 
@@ -16,6 +18,9 @@ public class Character : ObservableObject
     private string _danmakuProperty;
     private string _dodgeProperty;
     private string _abilityProperty;
+    private int _hitPoints;
+    private int _experience = 15;
+    private ObservableCollection<AbstractAdvancement> _advancements;
 
     public string Name
     {
@@ -31,6 +36,13 @@ public class Character : ObservableObject
         }
     }
 
+    public int? RaceId
+    {
+        get => Race?.Id;
+        set => Race = Race.Races.FirstOrDefault(x => x.Id == value);
+    }
+
+    [JsonIgnore]
     public Race Race
     {
         get => _race;
@@ -40,6 +52,8 @@ public class Character : ObservableObject
                 return;
 
             _race = value;
+            HitPoints = MaxHitPoints;
+            // HitPoints = new Random().Next(1, MaxHitPoints);
             OnPropertyChanged();
             OnPropertyChanged(nameof(Strength));
             OnPropertyChanged(nameof(Insight));
@@ -53,9 +67,18 @@ public class Character : ObservableObject
             OnPropertyChanged(nameof(Dodge));
             OnPropertyChanged(nameof(Ability));
             OnPropertyChanged(nameof(Speed));
+            OnPropertyChanged(nameof(MaxHitPoints));
+            OnPropertyChanged(nameof(Lives));
         }
     }
 
+    public int? FlowerId
+    {
+        get => Flower?.Id;
+        set => Flower = Flower.Flowers.FirstOrDefault(x => x.Id == value);
+    }
+
+    [JsonIgnore]
     public Flower Flower
     {
         get => _flower;
@@ -200,33 +223,124 @@ public class Character : ObservableObject
         }
     }
 
+    [JsonIgnore]
     public int Strength => StrengthBonus + (Race?.StrengthBonus).GetValueOrDefault() + (Flower?.StrengthBonus).GetValueOrDefault();
+    [JsonIgnore]
     public int Insight => InsightBonus + (Race?.InsightBonus).GetValueOrDefault() + (Flower?.InsightBonus).GetValueOrDefault();
+    [JsonIgnore]
     public int Intelligence => IntelligenceBonus + (Race?.IntelligenceBonus).GetValueOrDefault() + (Flower?.IntelligenceBonus).GetValueOrDefault();
+    [JsonIgnore]
     public int Charisma => CharismaBonus + (Race?.CharismaBonus).GetValueOrDefault() + (Flower?.CharismaBonus).GetValueOrDefault();
 
-    public int Reflex =>
-        Strength + Insight;
+    [JsonIgnore]
+    public int Reflex => Strength + Insight;
+    [JsonIgnore]
+    public int Perception => Insight + Intelligence;
+    [JsonIgnore]
+    public int Style => Intelligence + Charisma;
+    [JsonIgnore]
+    public int Willpower => Charisma + Strength;
 
-    public int Perception =>
-        Insight + Intelligence;
+    [JsonIgnore]
+    public int Danmaku => GetAbilityValueFromShortName(DanmakuProperty);
+    [JsonIgnore]
+    public int Dodge => GetAbilityValueFromShortName(DodgeProperty) + Reflex / 2;
+    [JsonIgnore]
+    public int Ability => (GetAbilityValueFromShortName(AbilityProperty) + Style) / 2;
 
-    public int Style =>
-        Intelligence + Charisma;
-
-    public int Willpower =>
-        Charisma + Strength;
-
-    public int Danmaku =>
-        GetAbilityValueFromShortName(DanmakuProperty);
-    public int Dodge =>
-        GetAbilityValueFromShortName(DodgeProperty) + Reflex / 2;
-
-    public int Ability =>
-        (GetAbilityValueFromShortName(AbilityProperty) + Style) / 2;
-
+    [JsonIgnore]
     public int Speed =>
         (Race?.MovementRange).GetValueOrDefault();
+
+    public int HitPoints
+    {
+        get => _hitPoints;
+        set
+        {
+            if (value == _hitPoints)
+                return;
+
+            _hitPoints = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Lives));
+        }
+    }
+
+    [JsonIgnore]
+    public int MaxHitPoints => Race?.HitPoints ?? 0;
+
+    [JsonIgnore]
+    public List<HitPointSection> Lives {
+        get
+        {
+            if (Race == null)
+                return null;
+
+            var hp = HitPoints;
+            var maxHp = MaxHitPoints;
+            var lives = new List<HitPointSection>();
+            var sectionSize = Race == Race.HumanHourai ? 20 : 10;
+
+            while (maxHp > 0)
+            {
+                var hpSection = Math.Min(hp, sectionSize);
+                var maxHpSection = Math.Min(maxHp, sectionSize);
+                hp -= hpSection;
+                maxHp -= maxHpSection;
+
+                lives.Add(new HitPointSection(hpSection, maxHpSection, sectionSize));
+            }
+
+            return lives;
+        }
+    }
+
+    public int Experience
+    {
+        get => _experience;
+        set
+        {
+            if (value == _experience)
+                return;
+
+            _experience = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(HasUnspentExperience));
+        }
+    }
+
+    [JsonIgnore]
+    public int ExperienceSpent
+        => Advancements.Sum(x => x.Cost);
+
+    [JsonIgnore]
+    public bool HasUnspentExperience
+        => Experience - Advancements.Sum(x => x.Cost) > 0;
+
+    public ObservableCollection<AbstractAdvancement> Advancements
+    {
+        get => _advancements;
+        init
+        {
+            if (Equals(value, _advancements))
+                return;
+
+            _advancements = value;
+            _advancements.CollectionChanged += (_, _) =>
+            {
+                OnPropertyChanged(nameof(ExperienceSpent));
+                OnPropertyChanged(nameof(HasUnspentExperience));
+            };
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(HasUnspentExperience));
+        }
+    }
+
+    public Character()
+    {
+        Advancements = new ObservableCollection<AbstractAdvancement>();
+    }
 
     public int GetAbilityValueFromShortName(string ability)
     {
@@ -246,6 +360,7 @@ public class Character : ObservableObject
     }
 
 
+    // ReSharper disable once CollectionNeverQueried.Global
     public static readonly ReadOnlyCollection<string> CoreAbilities = new(new List<string>()
     {
         "",

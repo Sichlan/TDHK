@@ -9,6 +9,8 @@
                   xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                   xmlns:models="clr-namespace:TDHK.ModernUi.Models"
                   xmlns:sys="clr-namespace:System"
+                  xmlns:converters="clr-namespace:TDHK.ModernUi.Helpers.Converters"
+                  xmlns:views="clr-namespace:TDHK.ModernUi.Views"
                   mc:Ignorable="d"
                   ui:WindowHelper.UseModernWindowStyle="True"
                   ui:TitleBar.ExtendViewIntoTitleBar="True"
@@ -22,6 +24,8 @@
                   d:DataContext="{d:DesignInstance viewModels:MainViewModel, IsDesignTimeCreatable=True}"
                   SizeChanged="MainWindow_OnSizeChanged">
     <fw:AcrylicWindow.Resources>
+        <converters:DisableAbilitySelectionConverter x:Key="DisableAbilitySelectionConverter" />
+
         <CollectionViewSource x:Key="UserMessageCollectionViewSource" Source="{Binding UserMessageViewModels}">
             <CollectionViewSource.SortDescriptions>
                 <componentModel:SortDescription PropertyName="CreatedAt" Direction="Descending" />
@@ -75,6 +79,29 @@
             <sys:Int16>0</sys:Int16>
             <sys:Int16>0</sys:Int16>
         </x:Array>
+        
+        <x:Array x:Key="HealthBarFallback" Type="models:HitPointSection">
+            <models:HitPointSection SectionSize="10" SectionValue="0" SectionMax="10"/>
+            <models:HitPointSection SectionSize="10" SectionValue="0" SectionMax="10"/>
+            <models:HitPointSection SectionSize="10" SectionValue="0" SectionMax="7"/>
+        </x:Array>
+        
+        <Style x:Key="DisableAbilitySelectionItemStyle" TargetType="ComboBoxItem"
+               d:DataContext="{d:DesignInstance sys:String}">
+            <Setter Property="IsEnabled">
+                <Setter.Value>
+                    <MultiBinding Converter="{StaticResource DisableAbilitySelectionConverter}">
+                        <Binding />
+                        <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}"
+                                 Path="DataContext.CurrentCharacter.DanmakuProperty" />
+                        <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}"
+                                 Path="DataContext.CurrentCharacter.DodgeProperty" />
+                        <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}"
+                                 Path="DataContext.CurrentCharacter.AbilityProperty" />
+                    </MultiBinding>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </fw:AcrylicWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -83,9 +110,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Grid
-            x:Name="AppTitleBar"
-            Height="{Binding ElementName=Window, Path=(ui:TitleBar.Height)}">
+        <Grid Height="{Binding ElementName=Window, Path=(ui:TitleBar.Height)}">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="TextElement.Foreground"
@@ -135,8 +160,11 @@
 
             <!-- Character -->
             <GroupBox Grid.Column="0" Header="Character Sheet" IsEnabled="{Binding IsCharacterLoaded}" Margin="5">
-                <Grid>
+                <Grid Grid.IsSharedSizeScope="True">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -148,10 +176,10 @@
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" MaxWidth="150" SharedSizeGroup="UniformGridOrderedOnWish"/>
+                        <ColumnDefinition Width="*" MaxWidth="150" SharedSizeGroup="UniformGridOrderedOnWish"/>
+                        <ColumnDefinition Width="*" MaxWidth="150" SharedSizeGroup="UniformGridOrderedOnWish"/>
+                        <ColumnDefinition Width="*" MaxWidth="150" SharedSizeGroup="UniformGridOrderedOnWish"/>
                     </Grid.ColumnDefinitions>
 
                     <TextBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="5" FontSize="20"
@@ -161,13 +189,13 @@
                     <ComboBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
                               SelectedItem="{Binding CurrentCharacter.Race}"
                               ItemsSource="{Binding Source={x:Static models:Race.Races}}"
-                              DisplayMemberPath="DisplayText" Width="225"
-                              ui:ControlHelper.PlaceholderText="Race" />
+                              DisplayMemberPath="DisplayText" ui:ControlHelper.PlaceholderText="Race"
+                              HorizontalAlignment="Stretch"/>
                     <ComboBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5"
                               SelectedItem="{Binding CurrentCharacter.Flower}"
                               ItemsSource="{Binding Source={x:Static models:Flower.Flowers}}"
-                              DisplayMemberPath="DisplayText" Width="225"
-                              ui:ControlHelper.PlaceholderText="Flower" />
+                              DisplayMemberPath="DisplayText" ui:ControlHelper.PlaceholderText="Flower"
+                              HorizontalAlignment="Stretch"/>
 
                     <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource StatTextBlockStyle}"
                                Text="{Binding CurrentCharacter.Strength, FallbackValue=STR 0, StringFormat={}STR {0}}" />
@@ -197,13 +225,16 @@
                                Text="{Binding CurrentCharacter.Speed, FallbackValue=SPD 0, StringFormat={}SPD {0}}" />
                     <ComboBox Grid.Row="4" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
                               ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
-                              SelectedItem="{Binding CurrentCharacter.DanmakuProperty}"/>
+                              SelectedItem="{Binding CurrentCharacter.DanmakuProperty}"
+                              ItemContainerStyle="{StaticResource DisableAbilitySelectionItemStyle}" />
                     <ComboBox Grid.Row="4" Grid.Column="3" Margin="5" HorizontalAlignment="Stretch"
                               ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
-                              SelectedItem="{Binding CurrentCharacter.DodgeProperty}"/>
+                              SelectedItem="{Binding CurrentCharacter.DodgeProperty}"
+                              ItemContainerStyle="{StaticResource DisableAbilitySelectionItemStyle}" />
                     <ComboBox Grid.Row="5" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
                               ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
-                              SelectedItem="{Binding CurrentCharacter.AbilityProperty}"/>
+                              SelectedItem="{Binding CurrentCharacter.AbilityProperty}"
+                              ItemContainerStyle="{StaticResource DisableAbilitySelectionItemStyle}" />
 
                     <TextBlock Grid.Row="6" Grid.Column="0" Margin="5" Text="Attack Range" />
                     <TextBlock Grid.Row="6" Grid.Column="2" Margin="5" Text="Character Image" />
@@ -225,17 +256,66 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <Border Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" CornerRadius="2" BorderThickness="2"
+                    <Border Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" CornerRadius="2"
+                            BorderThickness="2"
                             BorderBrush="{DynamicResource SystemControlBackgroundListMediumBrush}"
                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="PLACEHOLDER" FontSize="20" FontWeight="Medium"/>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="PLACEHOLDER"
+                                   FontSize="20" FontWeight="Medium" />
                     </Border>
+
+                    <ItemsControl Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding CurrentCharacter.Lives, FallbackValue={StaticResource HealthBarFallback}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="{Binding CurrentCharacter.Lives.Count, FallbackValue=3}" IsItemsHost="True" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type models:HitPointSection}">
+                                <Grid Margin="5">
+                                    <ProgressBar Maximum="{Binding SectionSize}" Value="{Binding SectionValue}"
+                                                 Foreground="Red" VerticalAlignment="Stretch"/>
+                                    <TextBlock HorizontalAlignment="Center">
+                                        <Run Text="{Binding SectionValue}" />
+                                        <Run Text="/" />
+                                        <Run Text="{Binding SectionMax}" />
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    
+                    <TextBlock Grid.Row="9" Grid.Column="0" Text="XP Spent" Margin="5" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="{Binding CurrentCharacter.ExperienceSpent}" Margin="5" VerticalAlignment="Center"/>
+                        <TextBlock Text="/" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="{Binding CurrentCharacter.Experience}" Margin="5, 2" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <Button Grid.Row="9" Grid.Column="2" Grid.ColumnSpan="2" Content="Advancements" Margin="5"
+                            HorizontalAlignment="Stretch">
+                        <ui:FlyoutService.Flyout>
+                            <ui:Flyout>
+                                <Grid Background="Pink"/>
+                            </ui:Flyout>
+                        </ui:FlyoutService.Flyout>
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentCharacter.HasUnspentExperience}" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
+                                        <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </Grid>
             </GroupBox>
         </Grid>
 
-        <ItemsControl Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                      Background="Transparent"
+        <ItemsControl Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent"
                       ItemsSource="{Binding Source={StaticResource UserMessageCollectionViewSource}}" />
     </Grid>
 </fw:AcrylicWindow>
