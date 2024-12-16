@@ -52,6 +52,8 @@ public class Character : ObservableObject
     private int _perceptionBonus;
     private int _styleBonus;
     private int _willpowerBonus;
+    private int _spellCardSlots = 2;
+    private int _abilityTargetNumberDiscount;
 
     public string Name
     {
@@ -426,7 +428,8 @@ public class Character : ObservableObject
     public int ExperienceSpent
         => MaxHitPointBonus * 2
            + (StrengthBonus + IntelligenceBonus + InsightBonus + CharismaBonus) * 7
-           + (ReflexBonus + PerceptionBonus + WillpowerBonus + StyleBonus) * 5;
+           + (ReflexBonus + PerceptionBonus + WillpowerBonus + StyleBonus) * 5
+           + (SpellCardSlots - 2 + AbilityTargetNumberDiscount) * 3;
 
     [JsonIgnore]
     public bool HasUnspentExperience
@@ -487,7 +490,38 @@ public class Character : ObservableObject
         }
     }
 
-    public int AbilityTargetNumber => (int)AbilityCategory + (int)AbilityTarget + (int)AbilityRange;
+    public int AbilityTargetNumber => (int)AbilityCategory + (int)AbilityTarget + (int)AbilityRange - AbilityTargetNumberDiscount;
+
+    public int SpellCardSlots
+    {
+        get => _spellCardSlots;
+        set
+        {
+            if (value == _spellCardSlots)
+                return;
+
+            _spellCardSlots = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(HasUnspentExperience));
+        }
+    }
+
+    public int AbilityTargetNumberDiscount
+    {
+        get => _abilityTargetNumberDiscount;
+        set
+        {
+            if (value == _abilityTargetNumberDiscount)
+                return;
+
+            _abilityTargetNumberDiscount = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(AbilityTargetNumber));
+            OnPropertyChanged(nameof(HasUnspentExperience));
+        }
+    }
 
     public int GetAbilityValueFromShortName(string ability)
     {

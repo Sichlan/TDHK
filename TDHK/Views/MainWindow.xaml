@@ -292,7 +292,7 @@
                                 <DataTemplate DataType="{x:Type models:HitPointSection}">
                                     <Grid Margin="5">
                                         <ProgressBar Maximum="{Binding SectionSize}" Value="{Binding SectionValue}"
-                                                     Foreground="Red" VerticalAlignment="Stretch" />
+                                                     Foreground="#88ED1071" VerticalAlignment="Stretch" />
                                         <TextBlock HorizontalAlignment="Center">
                                             <Run Text="{Binding SectionValue}" />
                                             <Run Text="/" />
@@ -317,7 +317,7 @@
                                 <ui:Flyout>
                                     <StackPanel Orientation="Vertical">
                                         <GroupBox Header="HP - 2 XP">
-                                            <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 HP" Command="{Binding BuyHitPointsAdvanceCommand}"/>
+                                            <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 HP" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="HP"/>
                                         </GroupBox>
                                         <GroupBox Header="Base Attributes - 7 XP">
                                             <UniformGrid Columns="4">
@@ -335,6 +335,14 @@
                                                 <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 STL" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="STL"/>
                                             </UniformGrid>
                                         </GroupBox>
+                                        <UniformGrid Columns="2">
+                                            <GroupBox Header="Extra Spellcard - 3 XP">
+                                                <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 Spellcard Slot" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="ESC"/>
+                                            </GroupBox>
+                                            <GroupBox Header="Lower Ability TN - 3 XP">
+                                                <Button Margin="5" HorizontalAlignment="Stretch" Content="-1 Ab TN" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="LAB"/>
+                                            </GroupBox>
+                                        </UniformGrid>
                                     </StackPanel>
                                 </ui:Flyout>
                             </ui:FlyoutService.Flyout>

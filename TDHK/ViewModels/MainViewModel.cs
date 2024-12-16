@@ -32,7 +32,6 @@ public class MainViewModel : BaseViewModel
             {
                 if (args.PropertyName is nameof(Character.ExperienceSpent) or nameof(Character.Experience))
                 {
-                    BuyHitPointsAdvanceCommand.NotifyCanExecuteChanged();
                     BuyBaseAttributeAdvanceCommand.NotifyCanExecuteChanged();
                 }
             };
@@ -47,7 +46,6 @@ public class MainViewModel : BaseViewModel
     public IRelayCommand NewCharacterCommand { get; }
     public IRelayCommand SaveCharacterCommand { get; }
     public IRelayCommand LoadCharacterCommand { get; }
-    public IRelayCommand BuyHitPointsAdvanceCommand { get; }
     public IRelayCommand<string> BuyBaseAttributeAdvanceCommand { get; }
 
     public MainViewModel(IUserInformationMessageService userInformationMessageService)
@@ -58,7 +56,6 @@ public class MainViewModel : BaseViewModel
         SaveCharacterCommand = new RelayCommand(ExecuteSaveCharacterCommand, CanExecuteSaveCharacterCommand);
         LoadCharacterCommand = new RelayCommand(ExecuteLoadCharacterCommand, CanExecuteLoadCharacterCommand);
 
-        BuyHitPointsAdvanceCommand = new RelayCommand(ExecuteBuyHitPointsAdvanceCommand, () => CanExecuteAdvanceCommand("HP"));
         BuyBaseAttributeAdvanceCommand = new RelayCommand<string>(ExecuteBuyAttributeAdvanceCommand, a => CanExecuteAdvanceCommand(a));
     }
 
@@ -69,6 +66,7 @@ public class MainViewModel : BaseViewModel
             "HP" => 2,
             "STR" or "INS" or "INT" or "CHA" => 7,
             "REF" or "PER" or "WIL" or "STL" => 5,
+            "ESC" or "LAB" => 3,
             _ => throw new ArgumentOutOfRangeException(nameof(attribute))
         };
 
@@ -79,6 +77,10 @@ public class MainViewModel : BaseViewModel
     {
         switch (attribute)
         {
+            case "HP":
+                CurrentCharacter.MaxHitPointBonus++;
+                CurrentCharacter.HitPoints++;
+                break;
             case "STR":
                 CurrentCharacter.StrengthBonus++;
                 break;
@@ -103,13 +105,13 @@ public class MainViewModel : BaseViewModel
             case "STL":
                 CurrentCharacter.StyleBonus++;
                 break;
+            case "ESC":
+                CurrentCharacter.SpellCardSlots++;
+                break;
+            case "LAB":
+                CurrentCharacter.AbilityTargetNumberDiscount++;
+                break;
         }
-    }
-
-    private void ExecuteBuyHitPointsAdvanceCommand()
-    {
-        CurrentCharacter.MaxHitPointBonus++;
-        CurrentCharacter.HitPoints++;
     }
 
     private static bool CanExecuteLoadCharacterCommand()
