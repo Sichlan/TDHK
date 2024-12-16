@@ -28,6 +28,14 @@ public class MainViewModel : BaseViewModel
                 return;
 
             _currentCharacter = value;
+            _currentCharacter.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName is nameof(Character.ExperienceSpent) or nameof(Character.Experience))
+                {
+                    BuyHitPointsAdvanceCommand.NotifyCanExecuteChanged();
+                    BuyBaseAttributeAdvanceCommand.NotifyCanExecuteChanged();
+                }
+            };
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsCharacterLoaded));
             SaveCharacterCommand.NotifyCanExecuteChanged();
@@ -39,6 +47,8 @@ public class MainViewModel : BaseViewModel
     public IRelayCommand NewCharacterCommand { get; }
     public IRelayCommand SaveCharacterCommand { get; }
     public IRelayCommand LoadCharacterCommand { get; }
+    public IRelayCommand BuyHitPointsAdvanceCommand { get; }
+    public IRelayCommand<string> BuyBaseAttributeAdvanceCommand { get; }
 
     public MainViewModel(IUserInformationMessageService userInformationMessageService)
     {
@@ -47,6 +57,59 @@ public class MainViewModel : BaseViewModel
         NewCharacterCommand = new RelayCommand(ExecuteNewCharacterCommand, CanExecuteNewCharacterCommand);
         SaveCharacterCommand = new RelayCommand(ExecuteSaveCharacterCommand, CanExecuteSaveCharacterCommand);
         LoadCharacterCommand = new RelayCommand(ExecuteLoadCharacterCommand, CanExecuteLoadCharacterCommand);
+
+        BuyHitPointsAdvanceCommand = new RelayCommand(ExecuteBuyHitPointsAdvanceCommand, () => CanExecuteAdvanceCommand("HP"));
+        BuyBaseAttributeAdvanceCommand = new RelayCommand<string>(ExecuteBuyAttributeAdvanceCommand, a => CanExecuteAdvanceCommand(a));
+    }
+
+    private bool CanExecuteAdvanceCommand(string attribute)
+    {
+        var cost = attribute switch
+        {
+            "HP" => 2,
+            "STR" or "INS" or "INT" or "CHA" => 7,
+            "REF" or "PER" or "WIL" or "STL" => 5,
+            _ => throw new ArgumentOutOfRangeException(nameof(attribute))
+        };
+
+        return CurrentCharacter.Experience - CurrentCharacter.ExperienceSpent >= cost;
+    }
+
+    private void ExecuteBuyAttributeAdvanceCommand(string attribute)
+    {
+        switch (attribute)
+        {
+            case "STR":
+                CurrentCharacter.StrengthBonus++;
+                break;
+            case "INS":
+                CurrentCharacter.InsightBonus++;
+                break;
+            case "INT":
+                CurrentCharacter.IntelligenceBonus++;
+                break;
+            case "CHA":
+                CurrentCharacter.CharismaBonus++;
+                break;
+            case "REF":
+                CurrentCharacter.ReflexBonus++;
+                break;
+            case "PER":
+                CurrentCharacter.PerceptionBonus++;
+                break;
+            case "WIL":
+                CurrentCharacter.WillpowerBonus++;
+                break;
+            case "STL":
+                CurrentCharacter.StyleBonus++;
+                break;
+        }
+    }
+
+    private void ExecuteBuyHitPointsAdvanceCommand()
+    {
+        CurrentCharacter.MaxHitPointBonus++;
+        CurrentCharacter.HitPoints++;
     }
 
     private static bool CanExecuteLoadCharacterCommand()

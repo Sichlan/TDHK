@@ -6,21 +6,52 @@ using Newtonsoft.Json;
 
 namespace TDHK.ModernUi.Models;
 
+public enum AbilityCategory
+{
+    Execution = 4,
+    Creation = 6,
+    Manipulation = 8
+}
+
+public enum AbilityTarget
+{
+    Individual = 2,
+    Group = 4,
+    Area = 6,
+    Mass = 10
+}
+
+public enum AbilityRange
+{
+    Contact = 1,
+    Seen = 2,
+    Known = 6,
+    Unknown = 10
+}
+
 public class Character : ObservableObject
 {
     private Race _race;
     private Flower _flower;
-    private int _strengthBonus;
-    private int _insightBonus;
-    private int _intelligenceBonus;
-    private int _charismaBonus;
     private string _name;
     private string _danmakuProperty;
     private string _dodgeProperty;
     private string _abilityProperty;
     private int _hitPoints;
     private int _experience = 15;
-    private ObservableCollection<AbstractAdvancement> _advancements;
+    private string _abilityDescription;
+    private AbilityCategory _abilityCategory;
+    private AbilityTarget _abilityTarget;
+    private AbilityRange _abilityRange;
+    private int _strengthBonus;
+    private int _insightBonus;
+    private int _intelligenceBonus;
+    private int _charismaBonus;
+    private int _maxHitPointBonus;
+    private int _reflexBonus;
+    private int _perceptionBonus;
+    private int _styleBonus;
+    private int _willpowerBonus;
 
     public string Name
     {
@@ -53,7 +84,6 @@ public class Character : ObservableObject
 
             _race = value;
             HitPoints = MaxHitPoints;
-            // HitPoints = new Random().Next(1, MaxHitPoints);
             OnPropertyChanged();
             OnPropertyChanged(nameof(Strength));
             OnPropertyChanged(nameof(Insight));
@@ -68,7 +98,6 @@ public class Character : ObservableObject
             OnPropertyChanged(nameof(Ability));
             OnPropertyChanged(nameof(Movement));
             OnPropertyChanged(nameof(MaxHitPoints));
-            OnPropertyChanged(nameof(Lives));
         }
     }
 
@@ -103,6 +132,8 @@ public class Character : ObservableObject
         }
     }
 
+    #region Core Stats
+
     public int StrengthBonus
     {
         get => _strengthBonus;
@@ -114,8 +145,8 @@ public class Character : ObservableObject
             _strengthBonus = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(Strength));
-            OnPropertyChanged(nameof(Reflex));
-            OnPropertyChanged(nameof(Willpower));
+            OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(HasUnspentExperience));
             OnPropertyChanged(nameof(Danmaku));
             OnPropertyChanged(nameof(Dodge));
             OnPropertyChanged(nameof(Ability));
@@ -133,8 +164,8 @@ public class Character : ObservableObject
             _insightBonus = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(Insight));
-            OnPropertyChanged(nameof(Perception));
-            OnPropertyChanged(nameof(Reflex));
+            OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(HasUnspentExperience));
             OnPropertyChanged(nameof(Danmaku));
             OnPropertyChanged(nameof(Dodge));
             OnPropertyChanged(nameof(Ability));
@@ -152,8 +183,8 @@ public class Character : ObservableObject
             _intelligenceBonus = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(Intelligence));
-            OnPropertyChanged(nameof(Perception));
-            OnPropertyChanged(nameof(Style));
+            OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(HasUnspentExperience));
             OnPropertyChanged(nameof(Danmaku));
             OnPropertyChanged(nameof(Dodge));
             OnPropertyChanged(nameof(Ability));
@@ -171,15 +202,99 @@ public class Character : ObservableObject
             _charismaBonus = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(Charisma));
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(Charisma));
-            OnPropertyChanged(nameof(Style));
-            OnPropertyChanged(nameof(Willpower));
+            OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(HasUnspentExperience));
             OnPropertyChanged(nameof(Danmaku));
             OnPropertyChanged(nameof(Dodge));
             OnPropertyChanged(nameof(Ability));
         }
     }
+
+    [JsonIgnore]
+    public int Strength => StrengthBonus + (Race?.StrengthBonus).GetValueOrDefault() + (Flower?.StrengthBonus).GetValueOrDefault();
+    [JsonIgnore]
+    public int Insight => InsightBonus + (Race?.InsightBonus).GetValueOrDefault() + (Flower?.InsightBonus).GetValueOrDefault();
+    [JsonIgnore]
+    public int Intelligence => IntelligenceBonus + (Race?.IntelligenceBonus).GetValueOrDefault() + (Flower?.IntelligenceBonus).GetValueOrDefault();
+    [JsonIgnore]
+    public int Charisma => CharismaBonus + (Race?.CharismaBonus).GetValueOrDefault() + (Flower?.CharismaBonus).GetValueOrDefault();
+
+    #endregion
+
+    #region Sub Stats
+
+    public int ReflexBonus
+    {
+        get => _reflexBonus;
+        set
+        {
+            if (value == _reflexBonus)
+                return;
+
+            _reflexBonus = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Reflex));
+            OnPropertyChanged(nameof(Dodge));
+            OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(HasUnspentExperience));
+        }
+    }
+
+    public int PerceptionBonus
+    {
+        get => _perceptionBonus;
+        set
+        {
+            if (value == _perceptionBonus)
+                return;
+
+            _perceptionBonus = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Perception));
+            OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(HasUnspentExperience));
+        }
+    }
+
+    public int StyleBonus
+    {
+        get => _styleBonus;
+        set
+        {
+            if (value == _styleBonus)
+                return;
+
+            _styleBonus = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Style));
+            OnPropertyChanged(nameof(Ability));
+            OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(HasUnspentExperience));
+        }
+    }
+
+    public int WillpowerBonus
+    {
+        get => _willpowerBonus;
+        set
+        {
+            if (value == _willpowerBonus)
+                return;
+
+            _willpowerBonus = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Willpower));
+            OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(HasUnspentExperience));
+        }
+    }
+
+    [JsonIgnore] public int Reflex => Strength + Insight + ReflexBonus;
+    [JsonIgnore] public int Perception => Insight + Intelligence + PerceptionBonus;
+    [JsonIgnore] public int Style => Intelligence + Charisma + StyleBonus;
+    [JsonIgnore] public int Willpower => Charisma + Strength + WillpowerBonus;
+
+    #endregion
 
     public string DanmakuProperty
     {
@@ -224,24 +339,6 @@ public class Character : ObservableObject
     }
 
     [JsonIgnore]
-    public int Strength => StrengthBonus + (Race?.StrengthBonus).GetValueOrDefault() + (Flower?.StrengthBonus).GetValueOrDefault();
-    [JsonIgnore]
-    public int Insight => InsightBonus + (Race?.InsightBonus).GetValueOrDefault() + (Flower?.InsightBonus).GetValueOrDefault();
-    [JsonIgnore]
-    public int Intelligence => IntelligenceBonus + (Race?.IntelligenceBonus).GetValueOrDefault() + (Flower?.IntelligenceBonus).GetValueOrDefault();
-    [JsonIgnore]
-    public int Charisma => CharismaBonus + (Race?.CharismaBonus).GetValueOrDefault() + (Flower?.CharismaBonus).GetValueOrDefault();
-
-    [JsonIgnore]
-    public int Reflex => Strength + Insight;
-    [JsonIgnore]
-    public int Perception => Insight + Intelligence;
-    [JsonIgnore]
-    public int Style => Intelligence + Charisma;
-    [JsonIgnore]
-    public int Willpower => Charisma + Strength;
-
-    [JsonIgnore]
     public int Danmaku => GetAbilityValueFromShortName(DanmakuProperty);
     [JsonIgnore]
     public int Dodge => (GetAbilityValueFromShortName(DodgeProperty) + Reflex) / 2 + (Race == Race.Inchling ? 1 : 0);
@@ -266,8 +363,24 @@ public class Character : ObservableObject
         }
     }
 
+    public int MaxHitPointBonus
+    {
+        get => _maxHitPointBonus;
+        set
+        {
+            if (value == _maxHitPointBonus)
+                return;
+
+            _maxHitPointBonus = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Lives));
+            OnPropertyChanged(nameof(MaxHitPoints));
+            OnPropertyChanged(nameof(ExperienceSpent));
+        }
+    }
+
     [JsonIgnore]
-    public int MaxHitPoints => Race?.HitPoints ?? 0;
+    public int MaxHitPoints => (Race?.HitPoints ?? 0) + MaxHitPointBonus;
 
     [JsonIgnore]
     public List<HitPointSection> Lives {
@@ -311,36 +424,70 @@ public class Character : ObservableObject
 
     [JsonIgnore]
     public int ExperienceSpent
-        => Advancements.Sum(x => x.Cost);
+        => MaxHitPointBonus * 2
+           + (StrengthBonus + IntelligenceBonus + InsightBonus + CharismaBonus) * 7
+           + (ReflexBonus + PerceptionBonus + WillpowerBonus + StyleBonus) * 5;
 
     [JsonIgnore]
     public bool HasUnspentExperience
-        => Experience - Advancements.Sum(x => x.Cost) > 0;
+        => Experience > ExperienceSpent;
 
-    public ObservableCollection<AbstractAdvancement> Advancements
+    public string AbilityDescription
     {
-        get => _advancements;
-        init
+        get => _abilityDescription;
+        set
         {
-            if (Equals(value, _advancements))
+            if (value == _abilityDescription)
                 return;
 
-            _advancements = value;
-            _advancements.CollectionChanged += (_, _) =>
-            {
-                OnPropertyChanged(nameof(ExperienceSpent));
-                OnPropertyChanged(nameof(HasUnspentExperience));
-            };
+            _abilityDescription = value;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(ExperienceSpent));
-            OnPropertyChanged(nameof(HasUnspentExperience));
         }
     }
 
-    public Character()
+    public AbilityCategory AbilityCategory
     {
-        Advancements = new ObservableCollection<AbstractAdvancement>();
+        get => _abilityCategory;
+        set
+        {
+            if (value == _abilityCategory)
+                return;
+
+            _abilityCategory = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(AbilityTargetNumber));
+        }
     }
+
+    public AbilityTarget AbilityTarget
+    {
+        get => _abilityTarget;
+        set
+        {
+            if (value == _abilityTarget)
+                return;
+
+            _abilityTarget = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(AbilityTargetNumber));
+        }
+    }
+
+    public AbilityRange AbilityRange
+    {
+        get => _abilityRange;
+        set
+        {
+            if (value == _abilityRange)
+                return;
+
+            _abilityRange = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(AbilityTargetNumber));
+        }
+    }
+
+    public int AbilityTargetNumber => (int)AbilityCategory + (int)AbilityTarget + (int)AbilityRange;
 
     public int GetAbilityValueFromShortName(string ability)
     {

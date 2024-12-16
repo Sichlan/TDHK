@@ -11,6 +11,7 @@
                   xmlns:sys="clr-namespace:System"
                   xmlns:converters="clr-namespace:TDHK.ModernUi.Helpers.Converters"
                   xmlns:views="clr-namespace:TDHK.ModernUi.Views"
+                  xmlns:helpers="clr-namespace:TDHK.ModernUi.Helpers"
                   mc:Ignorable="d"
                   ui:WindowHelper.UseModernWindowStyle="True"
                   ui:TitleBar.ExtendViewIntoTitleBar="True"
@@ -36,11 +37,20 @@
             <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
 
             <Style.Triggers>
-                <DataTrigger Binding="{Binding}" Value="2">
-                    <Setter Property="Background" Value="Chartreuse" />
-                </DataTrigger>
                 <DataTrigger Binding="{Binding}" Value="0">
                     <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style TargetType="TextBlock" x:Key="AttackRangeTextBoxStyle">
+            <Setter Property="FontSize" Value="40"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding}" Value="2">
+                    <Setter Property="Text" Value="★"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -155,163 +165,220 @@
         <Grid Grid.Row="2" x:Name="MainGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- Character -->
             <GroupBox Grid.Column="0" Header="Character Sheet" IsEnabled="{Binding IsCharacterLoaded}" Margin="5">
-                <Grid Grid.IsSharedSizeScope="True">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" Style="{x:Null}">
+                    <Grid Grid.IsSharedSizeScope="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" MaxWidth="150" SharedSizeGroup="UniformGridOrderedOnWish"/>
-                        <ColumnDefinition Width="*" MaxWidth="150" SharedSizeGroup="UniformGridOrderedOnWish"/>
-                        <ColumnDefinition Width="*" MaxWidth="150" SharedSizeGroup="UniformGridOrderedOnWish"/>
-                        <ColumnDefinition Width="*" MaxWidth="150" SharedSizeGroup="UniformGridOrderedOnWish"/>
-                    </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="120" />
+                        </Grid.ColumnDefinitions>
 
-                    <TextBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="5" FontSize="20"
-                             FontWeight="Medium" Text="{Binding CurrentCharacter.Name}"
-                             ui:ControlHelper.PlaceholderText="Name" />
+                        <TextBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="5" FontSize="20"
+                                 FontWeight="Medium" Text="{Binding CurrentCharacter.Name}"
+                                 ui:ControlHelper.PlaceholderText="Name" />
 
-                    <ComboBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
-                              SelectedItem="{Binding CurrentCharacter.Race}"
-                              ItemsSource="{Binding Source={x:Static models:Race.Races}}"
-                              DisplayMemberPath="DisplayText" ui:ControlHelper.PlaceholderText="Race"
-                              HorizontalAlignment="Stretch"/>
-                    <ComboBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5"
-                              SelectedItem="{Binding CurrentCharacter.Flower}"
-                              ItemsSource="{Binding Source={x:Static models:Flower.Flowers}}"
-                              DisplayMemberPath="DisplayText" ui:ControlHelper.PlaceholderText="Flower"
-                              HorizontalAlignment="Stretch"/>
+                        <ComboBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
+                                  SelectedItem="{Binding CurrentCharacter.Race}"
+                                  ItemsSource="{Binding Source={x:Static models:Race.Races}}"
+                                  DisplayMemberPath="DisplayText" ui:ControlHelper.PlaceholderText="Race"
+                                  HorizontalAlignment="Stretch" />
+                        <ComboBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5"
+                                  SelectedItem="{Binding CurrentCharacter.Flower}"
+                                  ItemsSource="{Binding Source={x:Static models:Flower.Flowers}}"
+                                  DisplayMemberPath="DisplayText" ui:ControlHelper.PlaceholderText="Flower"
+                                  HorizontalAlignment="Stretch" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Strength, FallbackValue=STR 0, StringFormat={}STR {0}}" />
-                    <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Insight, FallbackValue=INS 0, StringFormat={}INS {0}}" />
-                    <TextBlock Grid.Row="2" Grid.Column="2" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Intelligence, FallbackValue=INT 0, StringFormat={}INT {0}}" />
-                    <TextBlock Grid.Row="2" Grid.Column="3" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Charisma, FallbackValue=CHA 0, StringFormat={}CHA {0}}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Strength, FallbackValue=STR 0, StringFormat={}STR {0}}" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Insight, FallbackValue=INS 0, StringFormat={}INS {0}}" />
+                        <TextBlock Grid.Row="2" Grid.Column="2" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Intelligence, FallbackValue=INT 0, StringFormat={}INT {0}}" />
+                        <TextBlock Grid.Row="2" Grid.Column="3" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Charisma, FallbackValue=CHA 0, StringFormat={}CHA {0}}" />
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Reflex, FallbackValue=REF 0, StringFormat={}REF {0}}" />
-                    <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Perception, FallbackValue=PER 0, StringFormat={}PER {0}}" />
-                    <TextBlock Grid.Row="3" Grid.Column="2" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Willpower, FallbackValue=WIL 0, StringFormat={}WIL {0}}" />
-                    <TextBlock Grid.Row="3" Grid.Column="3" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Style, FallbackValue=STL 0, StringFormat={}STL {0}}" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Reflex, FallbackValue=REF 0, StringFormat={}REF {0}}" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Perception, FallbackValue=PER 0, StringFormat={}PER {0}}" />
+                        <TextBlock Grid.Row="3" Grid.Column="2" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Willpower, FallbackValue=WIL 0, StringFormat={}WIL {0}}" />
+                        <TextBlock Grid.Row="3" Grid.Column="3" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Style, FallbackValue=STL 0, StringFormat={}STL {0}}" />
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Danmaku, FallbackValue=DMK 0, StringFormat={}DMK {0}}" />
-                    <TextBlock Grid.Row="4" Grid.Column="2" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Dodge, FallbackValue=DOD 0, StringFormat={}DOD {0}}" />
-                    <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Ability, FallbackValue=ABI 0, StringFormat={}ABI {0}}" />
-                    <TextBlock Grid.Row="5" Grid.Column="2" Style="{StaticResource StatTextBlockStyle}"
-                               Text="{Binding CurrentCharacter.Movement, FallbackValue=MOV 0, StringFormat={}MOV {0}}" />
-                    <ComboBox Grid.Row="4" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
-                              SelectedItem="{Binding CurrentCharacter.DanmakuProperty}"
-                              ItemContainerStyle="{StaticResource DisableAbilitySelectionItemStyle}" />
-                    <ComboBox Grid.Row="4" Grid.Column="3" Margin="5" HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
-                              SelectedItem="{Binding CurrentCharacter.DodgeProperty}"
-                              ItemContainerStyle="{StaticResource DisableAbilitySelectionItemStyle}" />
-                    <ComboBox Grid.Row="5" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
-                              SelectedItem="{Binding CurrentCharacter.AbilityProperty}"
-                              ItemContainerStyle="{StaticResource DisableAbilitySelectionItemStyle}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Danmaku, FallbackValue=DMK 0, StringFormat={}DMK {0}}" />
+                        <TextBlock Grid.Row="4" Grid.Column="2" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Dodge, FallbackValue=DOD 0, StringFormat={}DOD {0}}" />
+                        <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Ability, FallbackValue=ABI 0, StringFormat={}ABI {0}}" />
+                        <TextBlock Grid.Row="5" Grid.Column="2" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.Movement, FallbackValue=MOV 0, StringFormat={}MOV {0}}" />
+                        <ComboBox Grid.Row="4" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
+                                  SelectedItem="{Binding CurrentCharacter.DanmakuProperty}"
+                                  ItemContainerStyle="{StaticResource DisableAbilitySelectionItemStyle}" />
+                        <ComboBox Grid.Row="4" Grid.Column="3" Margin="5" HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
+                                  SelectedItem="{Binding CurrentCharacter.DodgeProperty}"
+                                  ItemContainerStyle="{StaticResource DisableAbilitySelectionItemStyle}" />
+                        <ComboBox Grid.Row="5" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
+                                  SelectedItem="{Binding CurrentCharacter.AbilityProperty}"
+                                  ItemContainerStyle="{StaticResource DisableAbilitySelectionItemStyle}" />
 
-                    <TextBlock Grid.Row="6" Grid.Column="0" Margin="5" Text="Attack Range" />
-                    <TextBlock Grid.Row="6" Grid.Column="2" Margin="5" Text="Character Image" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" Margin="5" Text="Attack Range" />
+                        <TextBlock Grid.Row="6" Grid.Column="2" Margin="5" Text="Character Image" />
 
-                    <ItemsControl Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2"
-                                  ItemsSource="{Binding CurrentCharacter.Flower.AttackRange, FallbackValue={StaticResource AttackRangeFallback}}"
-                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid Columns="5" Rows="5" IsItemsHost="True" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Margin="5" CornerRadius="2" MinWidth="10"
-                                        Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
-                                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                                        Style="{StaticResource AttackRangeBorderStyle}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <Border Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" CornerRadius="2"
-                            BorderThickness="2"
-                            BorderBrush="{DynamicResource SystemControlBackgroundListMediumBrush}"
-                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="PLACEHOLDER"
-                                   FontSize="20" FontWeight="Medium" />
-                    </Border>
+                        <ItemsControl Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2"
+                                      ItemsSource="{Binding CurrentCharacter.Flower.AttackRange, FallbackValue={StaticResource AttackRangeFallback}}"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="5" Rows="5" IsItemsHost="True" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="5" CornerRadius="2" MinWidth="10"
+                                            Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
+                                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                            Style="{StaticResource AttackRangeBorderStyle}">
+                                        <TextBlock Style="{StaticResource AttackRangeTextBoxStyle}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Border Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" CornerRadius="2"
+                                BorderThickness="2"
+                                BorderBrush="{DynamicResource SystemControlBackgroundListMediumBrush}"
+                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="PLACEHOLDER"
+                                       FontSize="20" FontWeight="Medium" />
+                        </Border>
 
-                    <ItemsControl Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Stretch"
-                                  ItemsSource="{Binding CurrentCharacter.Lives, FallbackValue={StaticResource HealthBarFallback}}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid Columns="{Binding CurrentCharacter.Lives.Count, FallbackValue=3}" IsItemsHost="True" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:HitPointSection}">
-                                <Grid Margin="5">
-                                    <ProgressBar Maximum="{Binding SectionSize}" Value="{Binding SectionValue}"
-                                                 Foreground="Red" VerticalAlignment="Stretch"/>
-                                    <TextBlock HorizontalAlignment="Center">
-                                        <Run Text="{Binding SectionValue}" />
-                                        <Run Text="/" />
-                                        <Run Text="{Binding SectionMax}" />
-                                    </TextBlock>
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    
-                    <TextBlock Grid.Row="9" Grid.Column="0" Text="XP Spent" Margin="5" VerticalAlignment="Center"/>
-                    <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock Text="{Binding CurrentCharacter.ExperienceSpent}" Margin="5" VerticalAlignment="Center"/>
-                        <TextBlock Text="/" VerticalAlignment="Center" Margin="5"/>
-                        <TextBox Text="{Binding CurrentCharacter.Experience}" Margin="5, 2" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <Button Grid.Row="9" Grid.Column="2" Grid.ColumnSpan="2" Content="Advancements" Margin="5"
-                            HorizontalAlignment="Stretch">
-                        <ui:FlyoutService.Flyout>
-                            <ui:Flyout>
-                                <Grid Background="Pink"/>
-                            </ui:Flyout>
-                        </ui:FlyoutService.Flyout>
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding CurrentCharacter.HasUnspentExperience}" Value="True">
-                                        <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
-                                        <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
-                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                </Grid>
+                        <ItemsControl Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Stretch"
+                                      ItemsSource="{Binding CurrentCharacter.Lives, FallbackValue={StaticResource HealthBarFallback}}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="{Binding CurrentCharacter.Lives.Count, FallbackValue=3}"
+                                                 IsItemsHost="True" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:HitPointSection}">
+                                    <Grid Margin="5">
+                                        <ProgressBar Maximum="{Binding SectionSize}" Value="{Binding SectionValue}"
+                                                     Foreground="Red" VerticalAlignment="Stretch" />
+                                        <TextBlock HorizontalAlignment="Center">
+                                            <Run Text="{Binding SectionValue}" />
+                                            <Run Text="/" />
+                                            <Run Text="{Binding SectionMax}" />
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="XP Spent" Margin="5" VerticalAlignment="Center" />
+                        <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding CurrentCharacter.ExperienceSpent}" Margin="5"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="/" VerticalAlignment="Center" Margin="5" />
+                            <TextBox Text="{Binding CurrentCharacter.Experience}" Margin="5, 2"
+                                     VerticalAlignment="Center" />
+                        </StackPanel>
+                        <Button Grid.Row="9" Grid.Column="2" Grid.ColumnSpan="2" Content="Advancements" Margin="5"
+                                HorizontalAlignment="Stretch">
+                            <ui:FlyoutService.Flyout>
+                                <ui:Flyout>
+                                    <StackPanel Orientation="Vertical">
+                                        <GroupBox Header="HP - 2 XP">
+                                            <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 HP" Command="{Binding BuyHitPointsAdvanceCommand}"/>
+                                        </GroupBox>
+                                        <GroupBox Header="Base Attributes - 7 XP">
+                                            <UniformGrid Columns="4">
+                                                <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 STR" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="STR"/>
+                                                <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 INS" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="INS"/>
+                                                <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 INT" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="INT"/>
+                                                <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 CHA" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="CHA"/>
+                                            </UniformGrid>
+                                        </GroupBox>
+                                        <GroupBox Header="Sub Attributes - 5 XP">
+                                            <UniformGrid Columns="4">
+                                                <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 REF" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="REF"/>
+                                                <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 PER" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="PER"/>
+                                                <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 WIL" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="WIL"/>
+                                                <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 STL" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="STL"/>
+                                            </UniformGrid>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </ui:Flyout>
+                            </ui:FlyoutService.Flyout>
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CurrentCharacter.HasUnspentExperience}"
+                                                     Value="True">
+                                            <Setter Property="Foreground"
+                                                    Value="{DynamicResource AccentButtonForeground}" />
+                                            <Setter Property="Background"
+                                                    Value="{DynamicResource AccentButtonBackground}" />
+                                            <Setter Property="BorderBrush"
+                                                    Value="{DynamicResource AccentButtonBorderBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <TextBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="4" Margin="5"
+                                 Text="{Binding CurrentCharacter.AbilityDescription}"
+                                 ui:ControlHelper.PlaceholderText="Short Ability Description" />
+                        <ComboBox Grid.Row="11" Grid.Column="0" Margin="5" HorizontalAlignment="Stretch"
+                                  SelectedItem="{Binding CurrentCharacter.AbilityCategory}"
+                                  ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type models:AbilityCategory}}}" />
+                        <ComboBox Grid.Row="11" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
+                                  SelectedItem="{Binding CurrentCharacter.AbilityTarget}"
+                                  ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type models:AbilityTarget}}}" />
+                        <ComboBox Grid.Row="11" Grid.Column="2" Margin="5" HorizontalAlignment="Stretch"
+                                  SelectedItem="{Binding CurrentCharacter.AbilityRange}"
+                                  ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type models:AbilityRange}}}" />
+                        <TextBlock Grid.Row="11" Grid.Column="3" Style="{StaticResource StatTextBlockStyle}"
+                                   Text="{Binding CurrentCharacter.AbilityTargetNumber, StringFormat={}TN: {0}}"/>
+                    </Grid>
+                </ScrollViewer>
+            </GroupBox>
+            
+            <Border Grid.Column="1" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                    BorderBrush="{DynamicResource SystemControlBackgroundListMediumBrush}" Width="2" Margin="0,5"/>
+            
+            <!-- LLM -->
+            <GroupBox Grid.Column="2">
+                
             </GroupBox>
         </Grid>
 

@@ -85,7 +85,7 @@ public abstract class BaseViewModel : INotifyPropertyChanged, INotifyDataErrorIn
         {
             foreach (var propertyName in result.MemberNames)
             {
-                if (!_propertyErrors.TryGetValue(propertyName, out List<string> propertyErrors))
+                if (!_propertyErrors.TryGetValue(propertyName, out var propertyErrors))
                     _propertyErrors.Add(propertyName, propertyErrors = new List<string>());
                 propertyErrors.Add(result.ErrorMessage);
                 OnErrorsChanged(propertyName);
@@ -112,7 +112,7 @@ public abstract class BaseViewModel : INotifyPropertyChanged, INotifyDataErrorIn
         {
             foreach (var prop in result.MemberNames)
             {
-                if (!_propertyErrors.TryGetValue(prop, out List<string> propertyErrors))
+                if (!_propertyErrors.TryGetValue(prop, out var propertyErrors))
                     _propertyErrors.Add(prop, propertyErrors = new List<string>());
                 propertyErrors.Add(result.ErrorMessage);
                 OnErrorsChanged(prop);
