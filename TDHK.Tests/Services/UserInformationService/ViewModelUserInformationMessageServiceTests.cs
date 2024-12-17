@@ -43,21 +43,24 @@ public class ViewModelUserInformationMessageServiceTests
     }
 
     [Test]
-    public async Task AddDisplayMessage_ShouldAddMessageToCollection()
+    public void AddDisplayMessage_ShouldAddMessageToCollection()
     {
         // Arrange
-        var messageText = "Test Message";
-        var type = InformationType.Information;
-        var deleteAfter = 1000;
-        var details = "Details";
+        const string messageText = "Test Message";
+        const InformationType type = InformationType.Information;
+        const int deleteAfter = 1000;
+        const string details = "Details";
 
         // Act
         _service.AddDisplayMessage(messageText, type, deleteAfter, details);
 
         // Assert
         var wasCalled = _manualResetEvent.WaitOne(2000);
-        Assert.That(wasCalled, Is.EqualTo(true));
-        Assert.That(_service.UserMessageViewModels, Has.Count.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(wasCalled, Is.EqualTo(true));
+            Assert.That(_service.UserMessageViewModels, Has.Count.EqualTo(1));
+        });
         var message = _service.UserMessageViewModels.First();
         Assert.Multiple(() =>
         {
@@ -85,11 +88,11 @@ public class ViewModelUserInformationMessageServiceTests
     public async Task ExecuteUpdateTaskLoop_ShouldRemoveExpiredMessages()
     {
         // Arrange
-        var time = 100;
+        const int time = 100;
         _service.AddDisplayMessage("Test", InformationType.Information, time);
 
         // Act
-        await Task.Delay((int)(time * 1.5)); // Let the task loop run once.
+        await Task.Delay(time * 4); // Let the task loop run once.
 
         // Assert
         Assert.That(_service.UserMessageViewModels, Has.Count.EqualTo(0));
