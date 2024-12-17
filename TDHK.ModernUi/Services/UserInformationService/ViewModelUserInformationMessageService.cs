@@ -13,13 +13,15 @@ public class ViewModelUserInformationMessageService : IUserInformationMessageSer
 {
     private readonly CreateUserMessageViewModel _createUserMessageViewModel;
     private readonly CancellationTokenSource _cancellationTokenSource;
+    private readonly IDispatcherService _dispatcherService;
     private Task _updateTask = Task.CompletedTask;
 
     public ObservableCollection<UserMessageViewModel> UserMessageViewModels { get; } = new();
 
-    public ViewModelUserInformationMessageService(CreateUserMessageViewModel createUserMessageViewModel)
+    public ViewModelUserInformationMessageService(CreateUserMessageViewModel createUserMessageViewModel, IDispatcherService dispatcherService)
     {
         _createUserMessageViewModel = createUserMessageViewModel;
+        _dispatcherService = dispatcherService;
         _cancellationTokenSource = new CancellationTokenSource();
 
         QueueTask(ExecuteUpdateTaskLoop);
@@ -63,7 +65,7 @@ public class ViewModelUserInformationMessageService : IUserInformationMessageSer
                 $"{(deleteAfter > 0 ? $"({deleteAfter} sec.)" : "")}" +
                 $"{(!string.IsNullOrEmpty(messageDetails) ? $"\n - {messageDetails}" : "")}");
 
-            DispatcherHelper.RunOnMainThread(() => UserMessageViewModels.Add(_createUserMessageViewModel(message, type, deleteAfter, messageDetails)));
+            _dispatcherService.RunOnMainThread(() => UserMessageViewModels.Add(_createUserMessageViewModel(message, type, deleteAfter, messageDetails)));
         }));
     }
 
@@ -78,7 +80,7 @@ public class ViewModelUserInformationMessageService : IUserInformationMessageSer
     {
         QueueTask(() => Task.Run(() =>
         {
-            DispatcherHelper.RunOnMainThread(() => UserMessageViewModels.Remove(message));
+            _dispatcherService.RunOnMainThread(() => UserMessageViewModels.Remove(message));
         }));
     }
 }

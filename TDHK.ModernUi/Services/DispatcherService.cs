@@ -2,16 +2,16 @@
 using System.Windows;
 using System.Windows.Threading;
 
-namespace TDHK.ModernUi.Helpers
+namespace TDHK.ModernUi.Services
 {
-    public static class DispatcherHelper
+    public class DispatcherService : IDispatcherService
     {
-        public static void RunOnMainThread(Action action)
+        public void RunOnMainThread(Action action)
         {
             RunOnUIThread(Application.Current, action);
         }
 
-        public static void RunOnUIThread(this DispatcherObject d, Action action)
+        public void RunOnUIThread(DispatcherObject d, Action action)
         {
             var dispatcher = d.Dispatcher;
 

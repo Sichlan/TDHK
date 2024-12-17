@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDHK.ModernUi", "TDHK\TDHK.ModernUi.csproj", "{B6ADEEA2-1BF4-4505-AB39-C13CFDF8DC06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDHK.ModernUi", "TDHK.ModernUi\TDHK.ModernUi.csproj", "{B6ADEEA2-1BF4-4505-AB39-C13CFDF8DC06}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDHK.Tests", "TDHK.Tests\TDHK.Tests.csproj", "{55E40DFE-54D9-42A5-B4FF-31C1D2878D84}"
 EndProject
