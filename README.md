@@ -27,3 +27,7 @@
 - [ ] Combat Map
 - [ ] Chat log
 - [ ] DM Mode
+
+---
+
+https://learn.microsoft.com/en-us/windows/msix/package/packaging-uwp-apps
