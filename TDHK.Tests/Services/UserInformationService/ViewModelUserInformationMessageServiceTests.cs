@@ -42,8 +42,9 @@ public class ViewModelUserInformationMessageServiceTests
         _manualResetEvent.Dispose();
     }
 
-    [Test]
-    public void AddDisplayMessage_ShouldAddMessageToCollection()
+    [TestCase(false)]
+    [TestCase(true)]
+    public void AddDisplayMessage_ShouldAddMessageToCollection(bool useTimeSpan)
     {
         // Arrange
         const string messageText = "Test Message";
@@ -52,7 +53,10 @@ public class ViewModelUserInformationMessageServiceTests
         const string details = "Details";
 
         // Act
-        _service.AddDisplayMessage(messageText, type, deleteAfter, details);
+        if (useTimeSpan)
+            _service.AddDisplayMessage(messageText, type, new TimeSpan(0,0,0,0,deleteAfter), details);
+        else
+            _service.AddDisplayMessage(messageText, type, deleteAfter, details);
 
         // Assert
         var wasCalled = _manualResetEvent.WaitOne(2000);
