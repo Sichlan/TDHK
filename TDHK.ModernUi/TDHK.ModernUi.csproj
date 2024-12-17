@@ -3,8 +3,11 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net8.0-windows</TargetFramework>
+        <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
         <Nullable>disable</Nullable>
         <UseWPF>true</UseWPF>
+        <NeutralLanguage>en</NeutralLanguage>
+        <StartupObject>TDHK.ModernUi.App</StartupObject>
     </PropertyGroup>
 
     <ItemGroup>
