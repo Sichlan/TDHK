@@ -77,6 +77,9 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
+    - name: Test
+      run: Get-ChildItem -Path C:\ -Filter Microsoft.DesktopBridge.props -Recurse -ErrorAction SilentlyContinue -Force
+
     # Execute all unit tests in the solution
     - name: Execute unit tests
       run: dotnet test
