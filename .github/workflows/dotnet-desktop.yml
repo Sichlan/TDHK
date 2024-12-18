@@ -78,7 +78,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Copy components
-      run: xcopy "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Microsoft" "C:\Program Files\dotnet\sdk\9.0.101\Microsoft" /s /e
+      run: robocopy "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Microsoft" "C:\Program Files\dotnet\sdk\9.0.101\Microsoft" /s /e
       
       # Execute all unit tests in the solution
     - name: Execute unit tests
