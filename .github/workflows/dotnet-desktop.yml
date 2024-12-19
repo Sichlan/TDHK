@@ -78,7 +78,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Copy components
-      run: robocopy "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Microsoft\DesktopBridge" "C:\Program Files\dotnet\sdk\9.0.101\Microsoft\DesktopBridge" /s /e
+      run: robocopy "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Microsoft\DesktopBridge" "C:\Program Files\dotnet\sdk\9.0.101\Microsoft\DesktopBridge" /s /e; if ($lastexitcode -lt 8) { $global:LASTEXITCODE = $null }
       
       # Execute all unit tests in the solution
     - name: Execute unit tests
