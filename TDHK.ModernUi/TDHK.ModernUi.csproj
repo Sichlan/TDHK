@@ -34,4 +34,11 @@
         </Page>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="Themes\DesignTimeResources.xaml">
+            <SubType>Designer</SubType>
+            <Generator>MSBuild:Compile</Generator>
+            <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+        </None>
+    </ItemGroup>
 </Project>
