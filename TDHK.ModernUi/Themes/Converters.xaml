@@ -3,4 +3,5 @@
                     xmlns:converters="clr-namespace:TDHK.ModernUi.Helpers.Converters">
     <converters:PixelsToGridLengthConverter x:Key="PixelsToGridLength" />
     <converters:StringToUpperConverter x:Key="StringToUpperConverter"/>
+    <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 </ResourceDictionary>

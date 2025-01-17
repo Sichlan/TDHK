@@ -12,6 +12,8 @@
                   xmlns:converters="clr-namespace:TDHK.ModernUi.Helpers.Converters"
                   xmlns:views="clr-namespace:TDHK.ModernUi.Views"
                   xmlns:helpers="clr-namespace:TDHK.ModernUi.Helpers"
+                  xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                  xmlns:behaviours="clr-namespace:TDHK.ModernUi.Helpers.Behaviours"
                   mc:Ignorable="d"
                   ui:WindowHelper.UseModernWindowStyle="True"
                   ui:TitleBar.ExtendViewIntoTitleBar="True"
@@ -39,6 +41,23 @@
             <Style.Triggers>
                 <DataTrigger Binding="{Binding}" Value="0">
                     <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="Button" x:Key="AttackRangeButtonStyle" BasedOn="{StaticResource {x:Type Button}}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding}" Value="0">
+                    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding}" Value="1">
+                    <Setter Property="Background" Value="DarkRed"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding}" Value="2">
+                    <Setter Property="Background" Value="DarkGoldenrod"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding}" Value="3">
+                    <Setter Property="Background" Value="DarkBlue"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -112,6 +131,62 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
+        <DataTemplate x:Key="NewTabButtonContentTemplate">
+            <Grid/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="NewTabButtonHeaderTemplate">
+            <Button Content="+" Margin="0"
+                    Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}, Path=DataContext.NewSpellcardCommand}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ItemContentTemplate" DataType="{x:Type models:SpellCard}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="120"/>
+                </Grid.ColumnDefinitions>
+                
+                <ItemsControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
+                              ItemsSource="{Binding AttackRange}"
+                              HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="7" Rows="7" IsItemsHost="True" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Margin="5" Width="38"
+                                    Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
+                                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                    Style="{StaticResource AttackRangeButtonStyle}"
+                                    Command="{Binding DataContext.ToggleSpellCardAttackRangeField, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=views:MainWindow}}"
+                                    CommandParameter="{Binding}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ItemHeaderTemplate" DataType="{x:Type models:SpellCard}">
+            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="150"/>
+        </DataTemplate>
+        
+        <helpers:TemplateSelector x:Key="HeaderTemplateSelector"
+                             NewButtonTemplate="{StaticResource NewTabButtonHeaderTemplate}"
+                             ItemTemplate="{StaticResource ItemHeaderTemplate}"/>
+        <helpers:TemplateSelector x:Key="ContentTemplateSelector"
+                             NewButtonTemplate="{StaticResource NewTabButtonContentTemplate}"
+                             ItemTemplate="{StaticResource ItemContentTemplate}"/>
     </fw:AcrylicWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -167,6 +242,8 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <!-- Character -->
@@ -197,7 +274,7 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="5" FontSize="20"
-                                 FontWeight="Medium" Text="{Binding CurrentCharacter.Name}"
+                                 FontWeight="Medium" Text="{Binding CurrentCharacter.Name, UpdateSourceTrigger=PropertyChanged}"
                                  ui:ControlHelper.PlaceholderText="Name" />
 
                         <ComboBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
@@ -292,7 +369,11 @@
                                 <DataTemplate DataType="{x:Type models:HitPointSection}">
                                     <Grid Margin="5">
                                         <ProgressBar Maximum="{Binding SectionSize}" Value="{Binding SectionValue}"
-                                                     Foreground="#88ED1071" VerticalAlignment="Stretch" />
+                                                     Foreground="#88ED1071" VerticalAlignment="Stretch">
+                                            <b:Interaction.Behaviors>
+                                                <behaviours:ProgressBarAnimationBehaviour AnimationDuration="90"/>
+                                            </b:Interaction.Behaviors>
+                                        </ProgressBar>
                                         <TextBlock HorizontalAlignment="Center">
                                             <Run Text="{Binding SectionValue}" />
                                             <Run Text="/" />
@@ -349,14 +430,10 @@
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding CurrentCharacter.HasUnspentExperience}"
-                                                     Value="True">
-                                            <Setter Property="Foreground"
-                                                    Value="{DynamicResource AccentButtonForeground}" />
-                                            <Setter Property="Background"
-                                                    Value="{DynamicResource AccentButtonBackground}" />
-                                            <Setter Property="BorderBrush"
-                                                    Value="{DynamicResource AccentButtonBorderBrush}" />
+                                        <DataTrigger Binding="{Binding CurrentCharacter.HasUnspentExperience}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
+                                            <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -364,7 +441,7 @@
                         </Button>
 
                         <TextBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="4" Margin="5"
-                                 Text="{Binding CurrentCharacter.AbilityDescription}"
+                                 Text="{Binding CurrentCharacter.AbilityDescription, UpdateSourceTrigger=PropertyChanged}"
                                  ui:ControlHelper.PlaceholderText="Short Ability Description" />
                         <ComboBox Grid.Row="11" Grid.Column="0" Margin="5" HorizontalAlignment="Stretch"
                                   SelectedItem="{Binding CurrentCharacter.AbilityCategory}"
@@ -387,6 +464,20 @@
             <!-- LLM -->
             <GroupBox Grid.Column="2">
                 
+            </GroupBox>
+            
+            <Border Grid.Column="3" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                    BorderBrush="{DynamicResource SystemControlBackgroundListMediumBrush}" Width="2" Margin="0,5"/>
+            
+            <!-- Spell Cards -->
+            <GroupBox Grid.Column="4" Margin="5" Header="Spell cards"
+                      Visibility="{Binding IsCharacterLoaded, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TabControl ItemsSource="{Binding CurrentCharacter.SpellCards}"
+                            Style="{DynamicResource TabControlPivotStyle}"
+                            SelectedItem="{Binding CurrentSpellCard}"
+                            ItemTemplateSelector="{StaticResource HeaderTemplateSelector}"
+                            ContentTemplateSelector="{StaticResource ContentTemplateSelector}"
+                            SelectionChanged="SpellCardTabControl_OnSelectionChanged"/>
             </GroupBox>
         </Grid>
 

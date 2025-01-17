@@ -1,33 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows.Data;
 using Newtonsoft.Json;
 
 namespace TDHK.ModernUi.Models;
-
-public enum AbilityCategory
-{
-    Execution = 4,
-    Creation = 6,
-    Manipulation = 8
-}
-
-public enum AbilityTarget
-{
-    Individual = 2,
-    Group = 4,
-    Area = 6,
-    Mass = 10
-}
-
-public enum AbilityRange
-{
-    Contact = 1,
-    Seen = 2,
-    Known = 6,
-    Unknown = 10
-}
 
 public class Character : ObservableObject
 {
@@ -54,6 +33,7 @@ public class Character : ObservableObject
     private int _willpowerBonus;
     private int _spellCardSlots = 2;
     private int _abilityTargetNumberDiscount;
+    private ObservableCollection<SpellCard> _spellCards;
 
     public string Name
     {
@@ -521,6 +501,36 @@ public class Character : ObservableObject
             OnPropertyChanged(nameof(AbilityTargetNumber));
             OnPropertyChanged(nameof(HasUnspentExperience));
         }
+    }
+
+    public ObservableCollection<SpellCard> SpellCards
+    {
+        get => _spellCards;
+        init
+        {
+            if (value == _spellCards)
+                return;
+
+            _spellCards = value;
+
+            if (_spellCards != null)
+            {
+                if (!_spellCards.Any())
+                    _spellCards.Add(new SpellCard());
+
+                // _spellCards.CollectionChanged += (_, _) => OnPropertyChanged(nameof(ExperienceSpent));
+                var itemsView = (IEditableCollectionView)CollectionViewSource.GetDefaultView(_spellCards);
+                itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
+            }
+
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ExperienceSpent));
+        }
+    }
+
+    public Character()
+    {
+        SpellCards = new ObservableCollection<SpellCard>();
     }
 
     public int GetAbilityValueFromShortName(string ability)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -15,6 +16,7 @@ public class MainViewModel : BaseViewModel
 {
     private readonly IUserInformationMessageService _userInformationMessageService;
     private Character _currentCharacter;
+    private SpellCard _currentSpellCard;
 
     public ObservableCollection<UserMessageViewModel> UserMessageViewModels =>
         _userInformationMessageService.UserMessageViewModels;
@@ -30,14 +32,30 @@ public class MainViewModel : BaseViewModel
             _currentCharacter = value;
             _currentCharacter.PropertyChanged += (_, args) =>
             {
-                if (args.PropertyName is nameof(Character.ExperienceSpent) or nameof(Character.Experience))
-                {
-                    BuyBaseAttributeAdvanceCommand.NotifyCanExecuteChanged();
-                }
+                if (args.PropertyName is not (nameof(Character.ExperienceSpent) or nameof(Character.Experience)))
+                    return;
+
+                BuyBaseAttributeAdvanceCommand.NotifyCanExecuteChanged();
+                NewSpellcardCommand.NotifyCanExecuteChanged();
             };
+            if (CurrentSpellCard == null && _currentCharacter.SpellCards.Any())
+                CurrentSpellCard = _currentCharacter.SpellCards.First();
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsCharacterLoaded));
             SaveCharacterCommand.NotifyCanExecuteChanged();
+        }
+    }
+
+    public SpellCard CurrentSpellCard
+    {
+        get => _currentSpellCard;
+        set
+        {
+            if (Equals(value, _currentSpellCard))
+                return;
+
+            _currentSpellCard = value;
+            OnPropertyChanged();
         }
     }
 
@@ -46,7 +64,9 @@ public class MainViewModel : BaseViewModel
     public IRelayCommand NewCharacterCommand { get; }
     public IRelayCommand SaveCharacterCommand { get; }
     public IRelayCommand LoadCharacterCommand { get; }
+    public IRelayCommand NewSpellcardCommand { get; }
     public IRelayCommand<string> BuyBaseAttributeAdvanceCommand { get; }
+    public IRelayCommand<int> ToggleSpellCardAttackRangeField { get; }
 
     public MainViewModel(IUserInformationMessageService userInformationMessageService)
     {
@@ -55,8 +75,35 @@ public class MainViewModel : BaseViewModel
         NewCharacterCommand = new RelayCommand(ExecuteNewCharacterCommand, CanExecuteNewCharacterCommand);
         SaveCharacterCommand = new RelayCommand(ExecuteSaveCharacterCommand, CanExecuteSaveCharacterCommand);
         LoadCharacterCommand = new RelayCommand(ExecuteLoadCharacterCommand, CanExecuteLoadCharacterCommand);
+        NewSpellcardCommand = new RelayCommand(ExecuteNewSpellcardCommand, CanExecuteNewSpellcardCommand);
 
         BuyBaseAttributeAdvanceCommand = new RelayCommand<string>(ExecuteBuyAttributeAdvanceCommand, a => CanExecuteAdvanceCommand(a));
+        ToggleSpellCardAttackRangeField = new RelayCommand<int>(x => ExecuteToggleSpellCardAttackRangeField(ref x), CanExecuteToggleSpellCardAttackRangeField);
+    }
+
+    private bool CanExecuteToggleSpellCardAttackRangeField(int obj)
+    {
+        return true;
+    }
+
+    private void ExecuteToggleSpellCardAttackRangeField(ref int obj)
+    {
+        if (obj >= 3)
+            obj = 0;
+        else
+            obj++;
+    }
+
+    private bool CanExecuteNewSpellcardCommand()
+    {
+        return true;
+    }
+
+    private void ExecuteNewSpellcardCommand()
+    {
+        var spellCard = new SpellCard();
+        CurrentCharacter.SpellCards.Add(spellCard);
+        CurrentSpellCard = spellCard;
     }
 
     private bool CanExecuteAdvanceCommand(string attribute)

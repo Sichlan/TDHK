@@ -1,4 +1,7 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using TDHK.ModernUi.Models;
 using TDHK.ModernUi.ViewModels;
 
 namespace TDHK.ModernUi.Views
@@ -8,6 +11,8 @@ namespace TDHK.ModernUi.Views
     /// </summary>
     public partial class MainWindow
     {
+        private int _spellcardTabIndex = 0;
+
         public MainWindow(MainViewModel dataContext)
         {
             InitializeComponent();
@@ -26,6 +31,17 @@ namespace TDHK.ModernUi.Views
             {
                 Application.Current.Resources["ContentDialogMaxHeight"] = e.NewSize.Height;
             }
+        }
+
+        private void SpellCardTabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is not TabControl tabControl || e.AddedItems.Count < 1)
+                return;
+
+            if (e.AddedItems[0] is not SpellCard)
+                tabControl.SelectedIndex = _spellcardTabIndex;
+            else
+                _spellcardTabIndex = tabControl.SelectedIndex;
         }
     }
 }
