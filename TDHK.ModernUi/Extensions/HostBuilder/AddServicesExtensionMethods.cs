@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TDHK.ModernUi.Helpers;
 using TDHK.ModernUi.Services;
 using TDHK.ModernUi.Services.UserInformationService;
 

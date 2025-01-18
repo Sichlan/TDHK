@@ -15,7 +15,7 @@ public class PresetManager : INotifyPropertyChanged
     {
     }
 
-    public static PresetManager Current { get; } = new PresetManager();
+    public static PresetManager Current { get; } = new();
 
     public string ColorPreset
     {

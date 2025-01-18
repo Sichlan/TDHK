@@ -1,14 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace TDHK.ModernUi.Models;
 
+[DebuggerDisplay("{DisplayText}")]
 public class Skill
 {
     public int Id { get; private init; }
     public string Name { get; private init; }
     public SkillType SkillType { get; private init; }
     public List<SkillStage> SkillStages { get; private init; }
+    public string DisplayText => $"{Id} - {Name}";
 
     private Skill(int id, string name, SkillType skillType, List<SkillStage> skillStages)
     {
@@ -214,53 +218,53 @@ public class Skill
         new SkillStage(7, "Once per combat, until your next turn, all your rolls are guaranteed to be 7, not counting modifiers.")
     ]);
     public static readonly Skill ScarletMistIncident = new(47, "Scarlet Mist Incident", SkillType.General | SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, "You may spread a fog  that obscures vision; gives -1 to dodge and danmaku to those inside of it. Cannot be used when under 15HP.")
+        new SkillStage(10, "You may spread a fog  that obscures vision; gives -1 to dodge and danmaku to those inside of it. Cannot be used when under 15HP.", raceIdRequirement: [1,2,3,4,5,8])
     ]);
-    public static readonly Skill SpingSnowIncident = new(48, "Sping Snow Incident", SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, "grants a barrier that activates after scoring 3 hits with basic attacks; negates 1 enemy attack that would otherwise deal damage.")
+    public static readonly Skill SpringSnowIncident = new(48, "Spring Snow Incident", SkillType.Combat | SkillType.Incident, [
+        new SkillStage(10, "grants a barrier that activates after scoring 3 hits with basic attacks; negates 1 enemy attack that would otherwise deal damage.", raceIdRequirement: [1,2,3,4,6])
     ]);
     public static readonly Skill EternalNightIncident = new(49, "Eternal Night Incident", SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, "You may attack all squares in your basic attack range in one attack for half damage, min 1. Only at night.")
+        new SkillStage(10, "You may attack all squares in your basic attack range in one attack for half damage, min 1. Only at night.", raceIdRequirement: [11,15,23])
     ]);
     public static readonly Skill SixtyYearCycleGreatBarrierIncident = new(50, "Sixty-Year Cycle Great Barrier Incident", SkillType.Combat, [
-        new SkillStage(10, "If your HP total is even, when you KO an enemy with a basic attack, you may roll an attack on any other enemy in your basic attack range.")
+        new SkillStage(10, "If your HP total is even, when you KO an enemy with a basic attack, you may roll an attack on any other enemy in your basic attack range.", raceIdRequirement: [18,20,24])
     ]);
     public static readonly Skill MoriyaShrineIncident = new(51, "Moriya Shrine Incident", SkillType.Combat, [
-        new SkillStage(10, "If your HP total is odd, Once every other turn you can spend 10 tension to negate 1 hit on yourself.")
+        new SkillStage(10, "If your HP total is odd, Once every other turn you can spend 10 tension to negate 1 hit on yourself.", raceIdRequirement: [10,14,18,21])
     ]);
     public static readonly Skill EarthquakeIncident = new(52, "Earthquake Incident", SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, "If the weather is sunny, increase your dodge score by 2.")
+        new SkillStage(10, "If the weather is sunny, increase your dodge score by 2.", raceIdRequirement: [7,17,18])
     ]);
     public static readonly Skill FormerHellIncident = new(53, "Former Hell Incident", SkillType.General | SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, "If you are not first in the turn order, once per session you can force the opponent to have a roll total of 6.")
+        new SkillStage(10, "If you are not first in the turn order, once per session you can force the opponent to have a roll total of 6.", raceIdRequirement: [5,9,16])
     ]);
     public static readonly Skill TreasureShipIncident = new(54, "Treasure Ship Incident", SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, "Every time you dodge 3 attacks you can choose to either gain 5 tension, heal 5HP or gain one extra die for 2 rounds.")
+        new SkillStage(10, "Every time you dodge 3 attacks you can choose to either gain 5 tension, heal 5HP or gain one extra die for 2 rounds.", raceIdRequirement: [1,2,3,4,6,22])
     ]);
     public static readonly Skill DivineSpiritIncident = new(55, "Divine Spirit Incident", SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, "Every time you move 10 squares in combat, add +2 to your danmaku score.")
+        new SkillStage(10, "Every time you move 10 squares in combat, add +2 to your danmaku score.", raceIdRequirement: [1,2,3,4,19,25])
     ]);
     public static readonly Skill ReligiousWarIncident = new(56, "Religious War Incident", SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, "If combat has spectators gain +2 to your movement score")
+        new SkillStage(10, "If combat has spectators gain +2 to your movement score.", raceIdRequirement: [1,2,3,4,14,16,19,25])
     ]);
     public static readonly Skill SocialReversalIncident = new(57, "Social Reversal Incident", SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, "If you are on your last life, switch HP totals with an ally who is not")
+        new SkillStage(10, "If you are on your last life, switch HP totals with an ally who is not.", raceIdRequirement: [12,13,22])
     ]);
     public static readonly Skill UrbanLegendIncident = new(58, "Urban Legend Incident", SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, "You can spend 10 tension to activate one of the following effects: +3 to danmaku for one attack, heal 5hp, +3 to dodge for one attack, create an obstacle between you and an opponent, two basic attacks for one action at -4 to danmaku")
+        new SkillStage(10, "You can spend 10 tension to activate one of the following effects: +3 to danmaku for one attack, heal 5hp, +3 to dodge for one attack, create an obstacle between you and an opponent, two basic attacks for one action at -4 to danmaku.", raceIdRequirement: [1,2,3,4,6,11,14,19,25])
     ]);
     public static readonly Skill SecondLunarIncident = new(59, "Second Lunar Incident", SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, " Every Graze you get also reduces damage of the next hit by 4, to a minimum of 1.")
+        new SkillStage(10, " Every Graze you get also reduces damage of the next hit by 4, to a minimum of 1.", raceIdRequirement: [1,2,3,4,11,18,21])
     ]);
     public static readonly Skill FourSeasonsIncident = new(60, "Four Seasons Incident", SkillType.Combat | SkillType.Incident, [
-        new SkillStage(10, "Once per combat you may instantly move to within your basic attack range for one enemy. You must not have moved more than 5 spaces yet.")
+        new SkillStage(10, "Once per combat you may instantly move to within your basic attack range for one enemy. You must not have moved more than 5 spaces yet.", raceIdRequirement: [1,2,3,4,7,10])
     ]);
     public static readonly Skill PerfectPossessionIncident = new(61, "Perfect Possession Incident", SkillType.Combat | SkillType.Incident, [
         new SkillStage(10, "for every ally  you are adjacent to, you gain +1 to danmaku and dodge.")
     ]);
 
 
-    public static readonly List<Skill> All =
+    public static readonly List<Skill> Skills =
     [
         Conversationalist,
         EagleEyes,
@@ -309,7 +313,7 @@ public class Skill
         IntangibleMovement,
         Stabilize,
         ScarletMistIncident,
-        SpingSnowIncident,
+        SpringSnowIncident,
         EternalNightIncident,
         SixtyYearCycleGreatBarrierIncident,
         MoriyaShrineIncident,

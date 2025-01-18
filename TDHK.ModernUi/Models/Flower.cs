@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Diagnostics;
+
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace TDHK.ModernUi.Models;
 
+[DebuggerDisplay("{DisplayText}")]
 public class Flower
 {
-    public int Id { get; private set; }
+    public int Id { get; private init; }
     public string Name { get; private set; }
     public int StrengthBonus { get; private set; }
     public int InsightBonus { get; private set; }
@@ -205,8 +208,8 @@ public class Flower
 
     // ReSharper seems to be a little bit "confused" about this
     // ReSharper disable once CollectionNeverQueried.Global
-    public static readonly ReadOnlyCollection<Flower> Flowers = new(new List<Flower>()
-    {
+    public static readonly List<Flower> Flowers =
+    [
         RoteRosa,
         AmygdalusPersica,
         Lilium,
@@ -220,7 +223,7 @@ public class Flower
         PogostemonCablin,
         TulipaGesneriana,
         TagetesLucida
-    });
+    ];
 
     #endregion
 }

@@ -33,7 +33,7 @@ public class Character : ObservableObject
     private int _willpowerBonus;
     private int _spellCardSlots = 2;
     private int _abilityTargetNumberDiscount;
-    private ObservableCollection<SpellCard> _spellCards;
+    private readonly ObservableCollection<SpellCard> _spellCards;
 
     public string Name
     {
@@ -506,7 +506,7 @@ public class Character : ObservableObject
     public ObservableCollection<SpellCard> SpellCards
     {
         get => _spellCards;
-        init
+        private init
         {
             if (value == _spellCards)
                 return;
@@ -515,9 +515,6 @@ public class Character : ObservableObject
 
             if (_spellCards != null)
             {
-                if (!_spellCards.Any())
-                    _spellCards.Add(new SpellCard());
-
                 // _spellCards.CollectionChanged += (_, _) => OnPropertyChanged(nameof(ExperienceSpent));
                 var itemsView = (IEditableCollectionView)CollectionViewSource.GetDefaultView(_spellCards);
                 itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace TDHK.ModernUi.Models;
+﻿namespace TDHK.ModernUi.Models;
 
 public class SkillStage(
     int experienceCost,

@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using TDHK.ModernUi.Helpers;
 using TDHK.ModernUi.ViewModels.Users;
 
 namespace TDHK.ModernUi.Services.UserInformationService;
