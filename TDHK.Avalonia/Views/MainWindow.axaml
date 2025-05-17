@@ -24,7 +24,7 @@
         </SplitView.Pane>
         
         <SplitView.Content>
-            BBB
+            <TransitioningContentControl Content="{Binding ActiveViewModel}"/>
         </SplitView.Content>
     </SplitView>
 

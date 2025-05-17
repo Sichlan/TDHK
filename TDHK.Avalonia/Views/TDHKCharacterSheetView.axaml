@@ -8,7 +8,8 @@
              xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              xmlns:views="clr-namespace:TDHK.Avalonia.Views"
              xmlns:converters="clr-namespace:TDHK.Avalonia.Converters"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime"
+             mc:Ignorable="d"
              x:Class="TDHK.Avalonia.Views.TDHKCharacterSheetView"
              x:DataType="viewModels:TDHKCharacterSheetViewModel">
     <Design.DataContext>
@@ -16,6 +17,40 @@
     </Design.DataContext>
     
     <UserControl.Resources>
+        <collections:ArrayList x:Key="HealthBarFallback">
+            <models:HitPointSection SectionSize="10" SectionValue="10" SectionMax="10"/>
+            <models:HitPointSection SectionSize="10" SectionValue="4" SectionMax="10"/>
+            <models:HitPointSection SectionSize="10" SectionValue="0" SectionMax="7"/>
+        </collections:ArrayList>
+        
+        <collections:ArrayList x:Key="AttackRangeFallback">
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>2</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+            <sys:Int16>0</sys:Int16>
+        </collections:ArrayList>
+        
         <converters:DisableAbilitySelectionConverter x:Key="DisableAbilitySelectionConverter"/>
     
         <ControlTheme x:Key="StatTextBlockStyle" TargetType="TextBlock">
@@ -42,213 +77,210 @@
         <ControlTheme TargetType="Border" x:Key="AttackRangeBorderStyle">
             <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
 
-            <!-- <Style Selector="^:"></Style> -->
-            <!-- <ControlTheme.> -->
-            <!--     <DataTrigger Binding="{Binding}" Value="0"> -->
-            <!--         <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" /> -->
-            <!--     </DataTrigger> -->
-            <!-- </ControlTheme.T> -->
+            <Style Selector="^[DataContext=0]">
+                <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" />
+            </Style>
         </ControlTheme>
         
         <ControlTheme TargetType="TextBlock" x:Key="AttackRangeTextBoxStyle">
-            <Setter Property="FontSize" Value="40"/>
+            <Setter Property="FontSize" Value="30"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,0,0,5"/>
-            <!-- <Style.Triggers> -->
-            <!--     <DataTrigger Binding="{Binding}" Value="2"> -->
-            <!--         <Setter Property="Text" Value="★"/> -->
-            <!--     </DataTrigger> -->
-            <!-- </Style.Triggers> -->
+            <Setter Property="Margin" Value="0"/>
+            
+            <Style Selector="^[DataContext=2]">
+                <Setter Property="Text" Value="★"/>
+            </Style>
         </ControlTheme>
     </UserControl.Resources>
     
-    <Grid ShowGridLines="True"
-          ColumnDefinitions="120, 120, 120, 120"
-          RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
-
-        <TextBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="5" FontSize="20"
-                 FontWeight="Medium" Text="{Binding CurrentCharacter.Name, UpdateSourceTrigger=PropertyChanged}"
-                 Watermark="Name"/>
+    <Grid RowDefinitions="Auto, *">
+        <Menu Grid.Row="0">
+            <MenuItem Header="_Character">
+                <MenuItem Header="_New" Command="{Binding NewCharacterCommand}" />
+                <MenuItem Header="_Load" Command="{Binding LoadCharacterCommand}" />
+                <MenuItem Header="_Save" Command="{Binding SaveCharacterCommand}" />
+            </MenuItem>
+        </Menu>
         
-        <ComboBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
-                                  SelectedItem="{Binding CurrentCharacter.Race}"
-                                  ItemsSource="{Binding Source={x:Static models:Race.Races}}"
-                                  PlaceholderText="Race"
-                                  HorizontalAlignment="Stretch" />
-        <!-- DisplayMemberBinding="{Binding DisplayText}" -->
-        <ComboBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5"
-                  SelectedItem="{Binding CurrentCharacter.Flower}"
-                  ItemsSource="{Binding Source={x:Static models:Flower.Flowers}}"
-                  PlaceholderText="Flower"
-                  HorizontalAlignment="Stretch" />
-        <!-- DisplayMemberBinding="{Binding DisplayText}" -->
+        <Grid Grid.Row="1" IsEnabled="{Binding IsCharacterLoaded}"
+              ColumnDefinitions="120, 120, 120, 120"
+              RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Strength, FallbackValue=STR 0, StringFormat={}STR {0}}" />
-        <TextBlock Grid.Row="2" Grid.Column="1" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Insight, FallbackValue=INS 0, StringFormat={}INS {0}}" />
-        <TextBlock Grid.Row="2" Grid.Column="2" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Intelligence, FallbackValue=INT 0, StringFormat={}INT {0}}" />
-        <TextBlock Grid.Row="2" Grid.Column="3" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Charisma, FallbackValue=CHA 0, StringFormat={}CHA {0}}" />
+            <TextBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="5" FontSize="20"
+                     FontWeight="Medium" Text="{Binding CurrentCharacter.Name, UpdateSourceTrigger=PropertyChanged}"
+                     Watermark="Name"/>
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Reflex, FallbackValue=REF 0, StringFormat={}REF {0}}" />
-        <TextBlock Grid.Row="3" Grid.Column="1" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Perception, FallbackValue=PER 0, StringFormat={}PER {0}}" />
-        <TextBlock Grid.Row="3" Grid.Column="2" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Willpower, FallbackValue=WIL 0, StringFormat={}WIL {0}}" />
-        <TextBlock Grid.Row="3" Grid.Column="3" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Style, FallbackValue=STL 0, StringFormat={}STL {0}}" />
+            <ComboBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
+                      SelectedItem="{Binding CurrentCharacter.Race}"
+                      ItemsSource="{Binding Source={x:Static models:Race.Races}}"
+                      PlaceholderText="Race"
+                      HorizontalAlignment="Stretch" />
+            <ComboBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="5"
+                      SelectedItem="{Binding CurrentCharacter.Flower}"
+                      ItemsSource="{Binding Source={x:Static models:Flower.Flowers}}"
+                      PlaceholderText="Flower"
+                      HorizontalAlignment="Stretch" />
 
-        <TextBlock Grid.Row="4" Grid.Column="0" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Danmaku, FallbackValue=DMK 0, StringFormat={}DMK {0}}" />
-        <TextBlock Grid.Row="4" Grid.Column="2" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Dodge, FallbackValue=DOD 0, StringFormat={}DOD {0}}" />
-        <TextBlock Grid.Row="5" Grid.Column="0" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Ability, FallbackValue=ABI 0, StringFormat={}ABI {0}}" />
-        <TextBlock Grid.Row="5" Grid.Column="2" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.Movement, FallbackValue=MOV 0, StringFormat={}MOV {0}}" />
-        <ComboBox Grid.Row="4" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
-                  ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
-                  SelectedItem="{Binding CurrentCharacter.DanmakuProperty}"
-                  ItemContainerTheme="{StaticResource DisableAbilitySelectionItemStyle}" />
-        <ComboBox Grid.Row="4" Grid.Column="3" Margin="5" HorizontalAlignment="Stretch"
-                  ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
-                  SelectedItem="{Binding CurrentCharacter.DodgeProperty}"
-                  ItemContainerTheme="{StaticResource DisableAbilitySelectionItemStyle}" />
-        <ComboBox Grid.Row="5" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
-                  ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
-                  SelectedItem="{Binding CurrentCharacter.AbilityProperty}"
-                  ItemContainerTheme="{StaticResource DisableAbilitySelectionItemStyle}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Strength, FallbackValue=STR 0, StringFormat={}STR {0}}" />
+            <TextBlock Grid.Row="2" Grid.Column="1" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Insight, FallbackValue=INS 0, StringFormat={}INS {0}}" />
+            <TextBlock Grid.Row="2" Grid.Column="2" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Intelligence, FallbackValue=INT 0, StringFormat={}INT {0}}" />
+            <TextBlock Grid.Row="2" Grid.Column="3" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Charisma, FallbackValue=CHA 0, StringFormat={}CHA {0}}" />
+            
+            <TextBlock Grid.Row="3" Grid.Column="0" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Reflex, FallbackValue=REF 0, StringFormat={}REF {0}}" />
+            <TextBlock Grid.Row="3" Grid.Column="1" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Perception, FallbackValue=PER 0, StringFormat={}PER {0}}" />
+            <TextBlock Grid.Row="3" Grid.Column="2" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Willpower, FallbackValue=WIL 0, StringFormat={}WIL {0}}" />
+            <TextBlock Grid.Row="3" Grid.Column="3" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Style, FallbackValue=STL 0, StringFormat={}STL {0}}" />
+            
+            <TextBlock Grid.Row="4" Grid.Column="0" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Danmaku, FallbackValue=DMK 0, StringFormat={}DMK {0}}" />
+            <TextBlock Grid.Row="4" Grid.Column="2" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Dodge, FallbackValue=DOD 0, StringFormat={}DOD {0}}" />
+            <TextBlock Grid.Row="5" Grid.Column="0" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Ability, FallbackValue=ABI 0, StringFormat={}ABI {0}}" />
+            <TextBlock Grid.Row="5" Grid.Column="2" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.Movement, FallbackValue=MOV 0, StringFormat={}MOV {0}}" />
+            <ComboBox Grid.Row="4" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
+                      SelectedItem="{Binding CurrentCharacter.DanmakuProperty}"
+                      ItemContainerTheme="{StaticResource DisableAbilitySelectionItemStyle}" />
+            <ComboBox Grid.Row="4" Grid.Column="3" Margin="5" HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
+                      SelectedItem="{Binding CurrentCharacter.DodgeProperty}"
+                      ItemContainerTheme="{StaticResource DisableAbilitySelectionItemStyle}" />
+            <ComboBox Grid.Row="5" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
+                      SelectedItem="{Binding CurrentCharacter.AbilityProperty}"
+                      ItemContainerTheme="{StaticResource DisableAbilitySelectionItemStyle}" />
+            
+            <TextBlock Grid.Row="6" Grid.Column="0" Margin="5" Text="Attack Range" />
+            <TextBlock Grid.Row="6" Grid.Column="2" Margin="5" Text="Character Image" />
+            
+            <ItemsControl Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2"
+                          ItemsSource="{Binding CurrentCharacter.Flower.AttackRange, FallbackValue={StaticResource AttackRangeFallback}}"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="5" Rows="5"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="5" CornerRadius="2" MinWidth="10"
+                                Height="{Binding RelativeSource={RelativeSource Self}, Path=Width}"
+                                VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                Theme="{StaticResource AttackRangeBorderStyle}">
+                            <TextBlock Theme="{StaticResource AttackRangeTextBoxStyle}"/>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Border Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" CornerRadius="2"
+                    BorderThickness="2"
+                    BorderBrush="{DynamicResource SystemControlBackgroundListMediumBrush}"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="PLACEHOLDER"
+                           FontSize="20" FontWeight="Medium" />
+            </Border>
 
-        <TextBlock Grid.Row="6" Grid.Column="0" Margin="5" Text="Attack Range" />
-        <TextBlock Grid.Row="6" Grid.Column="2" Margin="5" Text="Character Image" />
-
-        <ItemsControl Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2"
-                      ItemsSource="{Binding CurrentCharacter.Flower.AttackRange, FallbackValue={StaticResource AttackRangeFallback}}"
-                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Columns="5" Rows="5" IsItemsHost="True" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border Margin="5" CornerRadius="2" MinWidth="10"
-                            Height="{Binding RelativeSource={RelativeSource Self}, Path=Width}"
-                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                            Theme="{StaticResource AttackRangeBorderStyle}">
-                        <TextBlock Theme="{StaticResource AttackRangeTextBoxStyle}"/>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <Border Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" CornerRadius="2"
-                BorderThickness="2"
-                BorderBrush="{DynamicResource SystemControlBackgroundListMediumBrush}"
-                HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="PLACEHOLDER"
-                       FontSize="20" FontWeight="Medium" />
-        </Border>
-
-        <ItemsControl Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Stretch"
-                      ItemsSource="{Binding CurrentCharacter.Lives, FallbackValue={StaticResource HealthBarFallback}}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Columns="{Binding CurrentCharacter.Lives.Count, FallbackValue=3}"
-                                 IsItemsHost="True" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:HitPointSection}">
-                    <Grid Margin="5">
-                        <ProgressBar Maximum="{Binding SectionSize}" Value="{Binding SectionValue}"
-                                     Foreground="#88ED1071" VerticalAlignment="Stretch">
-                            <!-- <b:Interaction.Behaviors> -->
-                            <!--     <behaviours:ProgressBarAnimationBehaviour AnimationDuration="90"/> -->
-                            <!-- </b:Interaction.Behaviors> -->
-                        </ProgressBar>
-                        <TextBlock HorizontalAlignment="Center">
-                            <Run Text="{Binding SectionValue}" />
-                            <Run Text="/" />
-                            <Run Text="{Binding SectionMax}" />
-                        </TextBlock>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <TextBlock Grid.Row="9" Grid.Column="0" Text="XP Spent" Margin="5" VerticalAlignment="Center" />
-        <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBlock Text="{Binding CurrentCharacter.ExperienceSpent}" Margin="5"
-                       VerticalAlignment="Center" />
-            <TextBlock Text="/" VerticalAlignment="Center" Margin="5" />
-            <TextBox Text="{Binding CurrentCharacter.Experience}" Margin="5, 2"
-                     VerticalAlignment="Center" />
-        </StackPanel>
-        <!-- <Button Grid.Row="9" Grid.Column="2" Grid.ColumnSpan="2" Content="Advancements" Margin="5" -->
-        <!--         HorizontalAlignment="Stretch"> -->
-        <!--     <ui:FlyoutService.Flyout> -->
-        <!--         <ui:Flyout> -->
-        <!--             <StackPanel Orientation="Vertical"> -->
-        <!--                 <GroupBox Header="HP - 2 XP"> -->
-        <!--                     <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 HP" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="HP"/> -->
-        <!--                 </GroupBox> -->
-        <!--                 <GroupBox Header="Base Attributes - 7 XP"> -->
-        <!--                     <UniformGrid Columns="4"> -->
-        <!--                         <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 STR" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="STR"/> -->
-        <!--                         <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 INS" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="INS"/> -->
-        <!--                         <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 INT" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="INT"/> -->
-        <!--                         <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 CHA" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="CHA"/> -->
-        <!--                     </UniformGrid> -->
-        <!--                 </GroupBox> -->
-        <!--                 <GroupBox Header="Sub Attributes - 5 XP"> -->
-        <!--                     <UniformGrid Columns="4"> -->
-        <!--                         <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 REF" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="REF"/> -->
-        <!--                         <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 PER" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="PER"/> -->
-        <!--                         <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 WIL" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="WIL"/> -->
-        <!--                         <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 STL" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="STL"/> -->
-        <!--                     </UniformGrid> -->
-        <!--                 </GroupBox> -->
-        <!--                 <UniformGrid Columns="2"> -->
-        <!--                     <GroupBox Header="Extra Spellcard - 3 XP"> -->
-        <!--                         <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 Spellcard Slot" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="ESC"/> -->
-        <!--                     </GroupBox> -->
-        <!--                     <GroupBox Header="Lower Ability TN - 3 XP"> -->
-        <!--                         <Button Margin="5" HorizontalAlignment="Stretch" Content="-1 Ab TN" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="LAB"/> -->
-        <!--                     </GroupBox> -->
-        <!--                 </UniformGrid> -->
-        <!--             </StackPanel> -->
-        <!--         </ui:Flyout> -->
-        <!--     </ui:FlyoutService.Flyout> -->
-        <!--     <Button.Style> -->
-        <!--         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"> -->
-        <!--             <Style.Triggers> -->
-        <!--                 <DataTrigger Binding="{Binding CurrentCharacter.HasUnspentExperience}" Value="True"> -->
-        <!--                     <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" /> -->
-        <!--                     <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" /> -->
-        <!--                     <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" /> -->
-        <!--                 </DataTrigger> -->
-        <!--             </Style.Triggers> -->
-        <!--         </Style> -->
-        <!--     </Button.Style> -->
-        <!-- </Button> -->
-
-        <TextBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="4" Margin="5"
-                 Text="{Binding CurrentCharacter.AbilityDescription, UpdateSourceTrigger=PropertyChanged}"
-                 Watermark="Short Ability Description" />
-        <ComboBox Grid.Row="11" Grid.Column="0" Margin="5" HorizontalAlignment="Stretch"
-                  SelectedItem="{Binding CurrentCharacter.AbilityCategory}"
-                  ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type models:AbilityCategory}}}" />
-        <ComboBox Grid.Row="11" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
-                  SelectedItem="{Binding CurrentCharacter.AbilityTarget}"
-                  ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type models:AbilityTarget}}}" />
-        <ComboBox Grid.Row="11" Grid.Column="2" Margin="5" HorizontalAlignment="Stretch"
-                  SelectedItem="{Binding CurrentCharacter.AbilityRange}"
-                  ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type models:AbilityRange}}}" />
-        <TextBlock Grid.Row="11" Grid.Column="3" Theme="{StaticResource StatTextBlockStyle}"
-                   Text="{Binding CurrentCharacter.AbilityTargetNumber, StringFormat={}TN: {0}}"/>
+            <ItemsControl Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Stretch"
+                          ItemsSource="{Binding CurrentCharacter.Lives, FallbackValue={StaticResource HealthBarFallback}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="{Binding CurrentCharacter.Lives.Count, FallbackValue=3}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:HitPointSection}">
+                        <Grid Margin="5">
+                            <ProgressBar Maximum="{Binding SectionSize}" Value="{Binding SectionValue}"
+                                         Foreground="#88ED1071" VerticalAlignment="Stretch"
+                                         ShowProgressText="True"
+                                         ProgressTextFormat="{}{0}/{3}"
+                                         MinWidth="0">
+                            </ProgressBar>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="XP Spent" Margin="5" VerticalAlignment="Center" />
+            <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="{Binding CurrentCharacter.ExperienceSpent}" Margin="5"
+                           VerticalAlignment="Center" />
+                <TextBlock Text="/" VerticalAlignment="Center" Margin="5" />
+                <TextBox Text="{Binding CurrentCharacter.Experience}" Margin="5, 2"
+                         VerticalAlignment="Center" />
+            </StackPanel>
+            <Button Grid.Row="9" Grid.Column="2" Grid.ColumnSpan="2" Content="Advancements" Margin="5"
+                    HorizontalAlignment="Stretch" Tag="{Binding CurrentCharacter.HasUnspentExperience}"
+                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                <Button.Flyout>
+                    <Flyout>
+                        <StackPanel Orientation="Vertical">
+                            <HeaderedContentControl Header="HP - 2 XP">
+                                <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 HP" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="HP"/>
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="Base Attributes - 7 XP">
+                                <UniformGrid Columns="4">
+                                    <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 STR" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="STR"/>
+                                    <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 INS" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="INS"/>
+                                    <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 INT" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="INT"/>
+                                    <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 CHA" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="CHA"/>
+                                </UniformGrid>
+                            </HeaderedContentControl>
+                            <HeaderedContentControl Header="Sub Attributes - 5 XP">
+                                <UniformGrid Columns="4">
+                                    <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 REF" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="REF"/>
+                                    <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 PER" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="PER"/>
+                                    <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 WIL" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="WIL"/>
+                                    <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 STL" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="STL"/>
+                                </UniformGrid>
+                            </HeaderedContentControl>
+                            <UniformGrid Columns="2">
+                                <HeaderedContentControl Header="Extra Spellcard - 3 XP">
+                                    <Button Margin="5" HorizontalAlignment="Stretch" Content="+1 Spellcard Slot" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="ESC"/>
+                                </HeaderedContentControl>
+                                <HeaderedContentControl Header="Lower Ability TN - 3 XP">
+                                    <Button Margin="5" HorizontalAlignment="Stretch" Content="-1 Ab TN" Command="{Binding BuyBaseAttributeAdvanceCommand}" CommandParameter="LAB"/>
+                                </HeaderedContentControl>
+                            </UniformGrid>
+                         </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+                <Button.Theme>
+                    <ControlTheme TargetType="Button">
+                        <Style Selector="^[Tag=True]">
+                            <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
+                            <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" />
+                        </Style>
+                    </ControlTheme>
+                </Button.Theme>
+            </Button>
+            
+            <TextBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="4" Margin="5"
+                     Text="{Binding CurrentCharacter.AbilityDescription, UpdateSourceTrigger=PropertyChanged}"
+                     Watermark="Short Ability Description" />
+            <ComboBox Grid.Row="11" Grid.Column="0" Margin="5" HorizontalAlignment="Stretch"
+                      SelectedItem="{Binding CurrentCharacter.AbilityCategory}"
+                      ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type models:AbilityCategory}}}" />
+            <ComboBox Grid.Row="11" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
+                      SelectedItem="{Binding CurrentCharacter.AbilityTarget}"
+                      ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type models:AbilityTarget}}}" />
+            <ComboBox Grid.Row="11" Grid.Column="2" Margin="5" HorizontalAlignment="Stretch"
+                      SelectedItem="{Binding CurrentCharacter.AbilityRange}"
+                      ItemsSource="{Binding Source={helpers:EnumBindingSource {x:Type models:AbilityRange}}}" />
+            <TextBlock Grid.Row="11" Grid.Column="3" Theme="{StaticResource StatTextBlockStyle}"
+                       Text="{Binding CurrentCharacter.AbilityTargetNumber, StringFormat={}TN: {0}}"/>
+        </Grid>
     </Grid>
 </UserControl>

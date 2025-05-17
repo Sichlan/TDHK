@@ -353,6 +353,7 @@ public class Character : ObservableObject
             OnPropertyChanged(nameof(Lives));
             OnPropertyChanged(nameof(MaxHitPoints));
             OnPropertyChanged(nameof(ExperienceSpent));
+            OnPropertyChanged(nameof(HasUnspentExperience));
         }
     }
 
@@ -404,7 +405,7 @@ public class Character : ObservableObject
         => MaxHitPointBonus * 2
            + (StrengthBonus + IntelligenceBonus + InsightBonus + CharismaBonus) * 7
            + (ReflexBonus + PerceptionBonus + WillpowerBonus + StyleBonus) * 5
-           + (SpellCardSlots - 2 + AbilityTargetNumberDiscount) * 3;
+           + (Math.Max(SpellCardSlots - 2, 0) + AbilityTargetNumberDiscount) * 3;
 
     [JsonIgnore]
     public bool HasUnspentExperience

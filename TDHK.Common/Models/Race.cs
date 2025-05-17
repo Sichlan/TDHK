@@ -18,6 +18,11 @@ public class Race
     public string Skill { get; private set; }
     public string DisplayText => $"{Id} - {Name}";
 
+    public override string ToString()
+    {
+        return DisplayText;
+    }
+
     private Race(int id, string name, int hitPoints, int strengthBonus, int insightBonus, int intelligenceBonus, int charismaBonus, int movementRange, string skill)
     {
         Id = id;

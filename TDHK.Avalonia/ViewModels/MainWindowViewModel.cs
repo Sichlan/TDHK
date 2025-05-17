@@ -10,14 +10,20 @@ public class MainWindowViewModel : ViewModelBase
     private readonly IServiceProvider _serviceProvider;
     private readonly INavigationService _navigationService;
 
-    public ViewModelBase ActiveViewModel { get; set; }
+    public ViewModelBase ActiveViewModel => _navigationService.ActiveViewModel;
 
-    [Obsolete("Only for design purposes")]
-    public MainWindowViewModel() { }
     public MainWindowViewModel(INavigationService navigationService, IServiceProvider serviceProvider)
     {
         _navigationService = navigationService;
         _serviceProvider = serviceProvider;
+
+        _navigationService.PropertyChanged += (sender, args) =>
+        {
+            if (args.PropertyName == nameof(_navigationService.ActiveViewModel))
+                OnPropertyChanged(nameof(ActiveViewModel));
+        };
+
+        NavigateToPage(typeof(TDHKCharacterSheetViewModel));
     }
 
     public void NavigateToPage(Type pageType)

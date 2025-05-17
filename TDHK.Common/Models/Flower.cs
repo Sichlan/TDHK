@@ -21,7 +21,7 @@ public class Flower
 
     public override string ToString()
     {
-        return $"{Id} - {Name}";
+        return DisplayText;
     }
 
     private Flower(int id, string name, int strengthBonus, int insightBonus, int intelligenceBonus, int charismaBonus, string skill, int[] attackRange,

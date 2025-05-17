@@ -1,7 +1,12 @@
 ﻿using System;
-using Avalonia;
-using Avalonia.Controls;
+using System.IO;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using Newtonsoft.Json;
+using ReactiveUI;
 using TDHK.Common.Models;
 
 namespace TDHK.Avalonia.ViewModels;
@@ -28,24 +33,27 @@ public class TDHKCharacterSheetViewModel : NavigableViewModel
             };
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsCharacterLoaded));
-            SaveCharacterCommand.NotifyCanExecuteChanged();
         }
     }
 
     public bool IsCharacterLoaded => CurrentCharacter != null;
 
-    public IRelayCommand NewCharacterCommand { get; }
-    public IRelayCommand SaveCharacterCommand { get; }
-    public IRelayCommand LoadCharacterCommand { get; }
+    public Interaction<bool, string> OpenFileDialog { get; }
+    
+    public ICommand NewCharacterCommand { get; }
+    public ICommand SaveCharacterCommand { get; }
+    public ICommand LoadCharacterCommand { get; }
     public IRelayCommand<string> BuyBaseAttributeAdvanceCommand { get; }
 
     public TDHKCharacterSheetViewModel()
     {
-        NewCharacterCommand = new RelayCommand(ExecuteNewCharacterCommand, CanExecuteNewCharacterCommand);
-        SaveCharacterCommand = new RelayCommand(ExecuteSaveCharacterCommand, CanExecuteSaveCharacterCommand);
-        LoadCharacterCommand = new RelayCommand(ExecuteLoadCharacterCommand, CanExecuteLoadCharacterCommand);
+        OpenFileDialog = new Interaction<bool, string>();
 
-        BuyBaseAttributeAdvanceCommand = new RelayCommand<string>(ExecuteBuyAttributeAdvanceCommand, a => CanExecuteAdvanceCommand(a));
+        NewCharacterCommand = ReactiveCommand.CreateFromTask(() => ExecuteNewCharacterCommand());
+        SaveCharacterCommand = ReactiveCommand.CreateFromTask(() => ExecuteSaveCharacterCommand(), this.WhenAnyValue(x => x.IsCharacterLoaded));
+        LoadCharacterCommand = ReactiveCommand.CreateFromTask(() => ExecuteLoadCharacterCommand());
+
+        BuyBaseAttributeAdvanceCommand = new RelayCommand<string>(ExecuteBuyAttributeAdvanceCommand, CanExecuteAdvanceCommand);
     }
 
     private bool CanExecuteAdvanceCommand(string attribute)
@@ -103,64 +111,30 @@ public class TDHKCharacterSheetViewModel : NavigableViewModel
         }
     }
 
-    private static bool CanExecuteLoadCharacterCommand()
+    private async Task ExecuteLoadCharacterCommand()
     {
-        return true;
+        var path = await OpenFileDialog.Handle(false);
+
+        if (!Path.Exists(path))
+            return;
+
+        CurrentCharacter = JsonConvert.DeserializeObject<Character>(await File.ReadAllTextAsync(path), new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto});
     }
 
-    private void ExecuteLoadCharacterCommand()
-    {
-        // var topLevel = TopLevel.GetTopLevel(Application.Current.ApplicationLifetime);
-        // var dialog = new OpenFileDialog()
-        // {
-        //     Filter = "TDHK Character (*.tdhkc)|*.tdhkc|All files (*.*)|*.*",
-        //     AddExtension = true,
-        //     CheckFileExists = false,
-        //     CheckPathExists = false,
-        //     RestoreDirectory = true
-        // };
-        //
-        // if (dialog.ShowDialog() != true
-        //     || !Path.Exists(Path.GetDirectoryName(dialog.FileName)))
-        //     return;
-        //
-        // CurrentCharacter = JsonConvert.DeserializeObject<Character>(File.ReadAllText(dialog.FileName), new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto});
-    }
-
-    private bool CanExecuteSaveCharacterCommand()
-    {
-        return CurrentCharacter != null;
-    }
-
-    private void ExecuteSaveCharacterCommand()
+    private async Task ExecuteSaveCharacterCommand()
     {
         if (CurrentCharacter == null)
             return;
 
-        // var dialog = new OpenFileDialog()
-        // {
-        //     Filter = "TDHK Character (*.tdhkc)|*.tdhkc|All files (*.*)|*.*",
-        //     AddExtension = true,
-        //     CheckFileExists = false,
-        //     CheckPathExists = false,
-        //     RestoreDirectory = true,
-        //     FileName =
-        //         $"{(string.IsNullOrEmpty(CurrentCharacter.Name) ? $"unnamed_character_{Guid.NewGuid()}" : CurrentCharacter.Name.Replace(" ", "_"))}.tdhkc"
-        // };
-        //
-        // if (dialog.ShowDialog() != true
-        //     || !Path.Exists(Path.GetDirectoryName(dialog.FileName)))
-        //     return;
-        //
-        // File.WriteAllText(dialog.FileName, JsonConvert.SerializeObject(CurrentCharacter, new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto}));
+        var path = await OpenFileDialog.Handle(true);
+
+        if (!Path.Exists(path))
+            return;
+
+        await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(CurrentCharacter, new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto}));
     }
 
-    private static bool CanExecuteNewCharacterCommand()
-    {
-        return true;
-    }
-
-    private void ExecuteNewCharacterCommand()
+    private async Task ExecuteNewCharacterCommand()
     {
         CurrentCharacter = new Character();
     }
