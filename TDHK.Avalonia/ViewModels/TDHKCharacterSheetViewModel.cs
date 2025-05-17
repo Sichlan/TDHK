@@ -1,25 +1,14 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
+using Avalonia;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
-using Newtonsoft.Json;
 using TDHK.Common.Models;
-using TDHK.Common.Services.UserInformationService;
-using TDHK.Common.ViewModels.Users;
-using TDHK.ModernUi.ViewModels.Common;
 
-namespace TDHK.ModernUi.ViewModels;
+namespace TDHK.Avalonia.ViewModels;
 
-public class MainViewModel : BaseViewModel
+public class TDHKCharacterSheetViewModel : NavigableViewModel
 {
-    private readonly IUserInformationMessageService _userInformationMessageService;
     private Character _currentCharacter;
-    private SpellCard _currentSpellCard;
-
-    public ObservableCollection<UserMessageViewModel> UserMessageViewModels =>
-        _userInformationMessageService.UserMessageViewModels;
 
     public Character CurrentCharacter
     {
@@ -36,26 +25,10 @@ public class MainViewModel : BaseViewModel
                     return;
 
                 BuyBaseAttributeAdvanceCommand.NotifyCanExecuteChanged();
-                NewSpellcardCommand.NotifyCanExecuteChanged();
             };
-            if (CurrentSpellCard == null && _currentCharacter.SpellCards.Any())
-                CurrentSpellCard = _currentCharacter.SpellCards.First();
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsCharacterLoaded));
             SaveCharacterCommand.NotifyCanExecuteChanged();
-        }
-    }
-
-    public SpellCard CurrentSpellCard
-    {
-        get => _currentSpellCard;
-        set
-        {
-            if (Equals(value, _currentSpellCard))
-                return;
-
-            _currentSpellCard = value;
-            OnPropertyChanged();
         }
     }
 
@@ -64,46 +37,15 @@ public class MainViewModel : BaseViewModel
     public IRelayCommand NewCharacterCommand { get; }
     public IRelayCommand SaveCharacterCommand { get; }
     public IRelayCommand LoadCharacterCommand { get; }
-    public IRelayCommand NewSpellcardCommand { get; }
     public IRelayCommand<string> BuyBaseAttributeAdvanceCommand { get; }
-    public IRelayCommand<int> ToggleSpellCardAttackRangeField { get; }
 
-    public MainViewModel(IUserInformationMessageService userInformationMessageService)
+    public TDHKCharacterSheetViewModel()
     {
-        _userInformationMessageService = userInformationMessageService;
-
         NewCharacterCommand = new RelayCommand(ExecuteNewCharacterCommand, CanExecuteNewCharacterCommand);
         SaveCharacterCommand = new RelayCommand(ExecuteSaveCharacterCommand, CanExecuteSaveCharacterCommand);
         LoadCharacterCommand = new RelayCommand(ExecuteLoadCharacterCommand, CanExecuteLoadCharacterCommand);
-        NewSpellcardCommand = new RelayCommand(ExecuteNewSpellcardCommand, CanExecuteNewSpellcardCommand);
 
         BuyBaseAttributeAdvanceCommand = new RelayCommand<string>(ExecuteBuyAttributeAdvanceCommand, a => CanExecuteAdvanceCommand(a));
-        ToggleSpellCardAttackRangeField = new RelayCommand<int>(x => ExecuteToggleSpellCardAttackRangeField(ref x), CanExecuteToggleSpellCardAttackRangeField);
-    }
-
-    private bool CanExecuteToggleSpellCardAttackRangeField(int obj)
-    {
-        return true;
-    }
-
-    private void ExecuteToggleSpellCardAttackRangeField(ref int obj)
-    {
-        if (obj >= 3)
-            obj = 0;
-        else
-            obj++;
-    }
-
-    private bool CanExecuteNewSpellcardCommand()
-    {
-        return true;
-    }
-
-    private void ExecuteNewSpellcardCommand()
-    {
-        var spellCard = new SpellCard();
-        CurrentCharacter.SpellCards.Add(spellCard);
-        CurrentSpellCard = spellCard;
     }
 
     private bool CanExecuteAdvanceCommand(string attribute)
@@ -168,20 +110,21 @@ public class MainViewModel : BaseViewModel
 
     private void ExecuteLoadCharacterCommand()
     {
-        var dialog = new OpenFileDialog()
-        {
-            Filter = "TDHK Character (*.tdhkc)|*.tdhkc|All files (*.*)|*.*",
-            AddExtension = true,
-            CheckFileExists = false,
-            CheckPathExists = false,
-            RestoreDirectory = true
-        };
-
-        if (dialog.ShowDialog() != true
-            || !Path.Exists(Path.GetDirectoryName(dialog.FileName)))
-            return;
-
-        CurrentCharacter = JsonConvert.DeserializeObject<Character>(File.ReadAllText(dialog.FileName), new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto});
+        // var topLevel = TopLevel.GetTopLevel(Application.Current.ApplicationLifetime);
+        // var dialog = new OpenFileDialog()
+        // {
+        //     Filter = "TDHK Character (*.tdhkc)|*.tdhkc|All files (*.*)|*.*",
+        //     AddExtension = true,
+        //     CheckFileExists = false,
+        //     CheckPathExists = false,
+        //     RestoreDirectory = true
+        // };
+        //
+        // if (dialog.ShowDialog() != true
+        //     || !Path.Exists(Path.GetDirectoryName(dialog.FileName)))
+        //     return;
+        //
+        // CurrentCharacter = JsonConvert.DeserializeObject<Character>(File.ReadAllText(dialog.FileName), new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto});
     }
 
     private bool CanExecuteSaveCharacterCommand()
@@ -194,22 +137,22 @@ public class MainViewModel : BaseViewModel
         if (CurrentCharacter == null)
             return;
 
-        var dialog = new OpenFileDialog()
-        {
-            Filter = "TDHK Character (*.tdhkc)|*.tdhkc|All files (*.*)|*.*",
-            AddExtension = true,
-            CheckFileExists = false,
-            CheckPathExists = false,
-            RestoreDirectory = true,
-            FileName =
-                $"{(string.IsNullOrEmpty(CurrentCharacter.Name) ? $"unnamed_character_{Guid.NewGuid()}" : CurrentCharacter.Name.Replace(" ", "_"))}.tdhkc"
-        };
-
-        if (dialog.ShowDialog() != true
-            || !Path.Exists(Path.GetDirectoryName(dialog.FileName)))
-            return;
-
-        File.WriteAllText(dialog.FileName, JsonConvert.SerializeObject(CurrentCharacter, new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto}));
+        // var dialog = new OpenFileDialog()
+        // {
+        //     Filter = "TDHK Character (*.tdhkc)|*.tdhkc|All files (*.*)|*.*",
+        //     AddExtension = true,
+        //     CheckFileExists = false,
+        //     CheckPathExists = false,
+        //     RestoreDirectory = true,
+        //     FileName =
+        //         $"{(string.IsNullOrEmpty(CurrentCharacter.Name) ? $"unnamed_character_{Guid.NewGuid()}" : CurrentCharacter.Name.Replace(" ", "_"))}.tdhkc"
+        // };
+        //
+        // if (dialog.ShowDialog() != true
+        //     || !Path.Exists(Path.GetDirectoryName(dialog.FileName)))
+        //     return;
+        //
+        // File.WriteAllText(dialog.FileName, JsonConvert.SerializeObject(CurrentCharacter, new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto}));
     }
 
     private static bool CanExecuteNewCharacterCommand()

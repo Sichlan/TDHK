@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
+using TDHK.Common.Services;
 
 namespace TDHK.ModernUi.Services
 {
@@ -11,7 +12,7 @@ namespace TDHK.ModernUi.Services
             RunOnUIThread(Application.Current, action);
         }
 
-        public void RunOnUIThread(DispatcherObject d, Action action)
+        private static void RunOnUIThread(DispatcherObject d, Action action)
         {
             var dispatcher = d.Dispatcher;
 

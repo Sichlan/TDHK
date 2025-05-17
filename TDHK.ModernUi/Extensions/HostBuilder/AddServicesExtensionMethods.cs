@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TDHK.Common.Services;
+using TDHK.Common.Services.UserInformationService;
 using TDHK.ModernUi.Services;
-using TDHK.ModernUi.Services.UserInformationService;
 
 namespace TDHK.ModernUi.Extensions.HostBuilder;
 

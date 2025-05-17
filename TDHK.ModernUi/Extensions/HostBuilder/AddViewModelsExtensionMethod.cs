@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TDHK.ModernUi.Services.UserInformationService;
+using TDHK.Common.Services.UserInformationService;
+using TDHK.Common.ViewModels.Users;
 using TDHK.ModernUi.ViewModels;
-using TDHK.ModernUi.ViewModels.Users;
 
 namespace TDHK.ModernUi.Extensions.HostBuilder;
 

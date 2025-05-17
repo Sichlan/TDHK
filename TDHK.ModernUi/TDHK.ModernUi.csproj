@@ -11,7 +11,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2"/>
         <PackageReference Include="FluentWPF" Version="0.10.2"/>
         <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
@@ -40,5 +39,9 @@
             <Generator>MSBuild:Compile</Generator>
             <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TDHK.Common\TDHK.Common.csproj" />
     </ItemGroup>
 </Project>

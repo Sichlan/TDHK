@@ -6,9 +6,9 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviours="clr-namespace:TDHK.ModernUi.Helpers.Behaviours"
-             xmlns:users1="clr-namespace:TDHK.ModernUi.ViewModels.Users"
+             xmlns:users="clr-namespace:TDHK.Common.ViewModels.Users;assembly=TDHK.Common"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance users1:UserMessageViewModel}"
+             d:DataContext="{d:DesignInstance users:UserMessageViewModel}"
              Background="Transparent" Margin="2">
     <Border BorderThickness="0" CornerRadius="2" Style="{DynamicResource BorderStyle}">
         <b:Interaction.Triggers>

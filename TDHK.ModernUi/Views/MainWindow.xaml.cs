@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using TDHK.ModernUi.Models;
+using TDHK.Common.Models;
 using TDHK.ModernUi.ViewModels;
 
 namespace TDHK.ModernUi.Views

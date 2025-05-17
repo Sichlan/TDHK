@@ -1,7 +1,7 @@
 ﻿using Moq;
-using TDHK.ModernUi.Services;
-using TDHK.ModernUi.Services.UserInformationService;
-using TDHK.ModernUi.ViewModels.Users;
+using TDHK.Common.Services;
+using TDHK.Common.Services.UserInformationService;
+using TDHK.Common.ViewModels.Users;
 
 namespace TDHK.Tests.Services.UserInformationService;
 
