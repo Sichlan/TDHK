@@ -6,6 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TDHK.Avalonia.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        SizeToContent="WidthAndHeight"
         Icon="/Assets/avalonia-logo.ico"
         Title="TDHK.Avalonia">
 

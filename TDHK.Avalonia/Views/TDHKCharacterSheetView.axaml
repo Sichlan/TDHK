@@ -55,9 +55,9 @@
     
         <ControlTheme x:Key="StatTextBlockStyle" TargetType="TextBlock">
             <Setter Property="Margin" Value="5" />
-            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontSize" Value="24" />
             <Setter Property="TextAlignment" Value="Center" />
-            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}"/>
         </ControlTheme>
         
         <ControlTheme x:Key="DisableAbilitySelectionItemStyle" TargetType="ComboBoxItem"
@@ -213,13 +213,10 @@
             </ItemsControl>
             
             <TextBlock Grid.Row="9" Grid.Column="0" Text="XP Spent" Margin="5" VerticalAlignment="Center" />
-            <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock Text="{Binding CurrentCharacter.ExperienceSpent}" Margin="5"
-                           VerticalAlignment="Center" />
-                <TextBlock Text="/" VerticalAlignment="Center" Margin="5" />
-                <TextBox Text="{Binding CurrentCharacter.Experience}" Margin="5, 2"
-                         VerticalAlignment="Center" />
-            </StackPanel>
+            <TextBlock Grid.Row="9" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right"
+                       Text="{Binding CurrentCharacter.ExperienceSpent, StringFormat={}{0} /, FallbackValue=0 /}" Margin="5"/>
+            <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding CurrentCharacter.Experience}"
+                     Margin="5" VerticalAlignment="Center" Watermark="Current XP"/>
             <Button Grid.Row="9" Grid.Column="2" Grid.ColumnSpan="2" Content="Advancements" Margin="5"
                     HorizontalAlignment="Stretch" Tag="{Binding CurrentCharacter.HasUnspentExperience}"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
