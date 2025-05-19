@@ -24,7 +24,7 @@
     - [ ] Skill purchase and upgrade
     - [x] Extra spellcard slot
     - [x] Ability
-  - [ ] Switch from character creation to play mode (either irreversible or with DM permission)
+  - [x] Switch from character creation to play mode (either irreversible or with DM permission)
 - [ ] Combat Map
 - [ ] Chat log
 - [ ] DM Mode
