@@ -12,5 +12,6 @@
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="Assets/Icons.axaml"/>
+        <StyleInclude Source="Assets/Validation.axaml"/>
     </Application.Styles>
 </Application>

@@ -40,7 +40,7 @@ public class TDHKCharacterSheetViewModel : NavigableViewModel
     public bool IsCharacterLoaded => CurrentCharacter != null;
 
     public Interaction<bool, string> OpenFileDialog { get; }
-    
+
     public ICommand NewCharacterCommand { get; }
     public ICommand SaveCharacterCommand { get; }
     public ICommand LoadCharacterCommand { get; }

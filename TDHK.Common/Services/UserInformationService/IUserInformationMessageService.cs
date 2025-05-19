@@ -12,7 +12,7 @@ public enum InformationType
 }
 
 /// <summary>
-/// Defines methods for displaying messages to the user. 
+/// Defines methods for displaying messages to the user.
 /// </summary>
 public interface IUserInformationMessageService
 {
