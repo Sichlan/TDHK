@@ -22,12 +22,9 @@
     - [x] Core Stats
     - [x] Sub Stats
     - [ ] Skill purchase and upgrade
-    - [ ] Extra spellcard slot
+    - [x] Extra spellcard slot
     - [x] Ability
+  - [ ] Switch from character creation to play mode (either irreversible or with DM permission)
 - [ ] Combat Map
 - [ ] Chat log
 - [ ] DM Mode
-
----
-
-https://learn.microsoft.com/en-us/windows/msix/package/packaging-uwp-apps
