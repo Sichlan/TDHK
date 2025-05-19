@@ -3,6 +3,8 @@
         xmlns:vm="using:TDHK.Avalonia.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        xmlns:models="clr-namespace:TDHK.Avalonia.Models"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TDHK.Avalonia.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -17,10 +19,31 @@
     </Design.DataContext>
 
     <SplitView IsPaneOpen="{Binding #MenuToggleButton.IsChecked}"
-               DisplayMode="CompactInline">
+               DisplayMode="CompactOverlay"
+               CompactPaneLength="50">
         <SplitView.Pane>
             <StackPanel Orientation="Vertical" Spacing="5" Margin="5">
-                <ToggleButton Content="=" Name="MenuToggleButton" Height="30" Width="30"/>
+                <ToggleButton Name="MenuToggleButton" Height="40" Width="40">
+                    <PathIcon Data="{StaticResource LineHorizontal3Regular}"/>
+                </ToggleButton>
+                
+                <ListBox ItemsSource="{Binding NavigableViewModels}"
+                         SelectedItem="{Binding SelectedNavigationBarEntry}"
+                         SelectionChanged="SelectingItemsControl_OnSelectionChanged">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="10"/>
+                        </Style>
+                    </ListBox.Styles>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="models:NavigationBarEntry">
+                            <StackPanel Spacing="15" Orientation="Horizontal">
+                                <PathIcon Data="{Binding Icon}"/>
+                                <TextBlock Text="{Binding Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </StackPanel>
         </SplitView.Pane>
         

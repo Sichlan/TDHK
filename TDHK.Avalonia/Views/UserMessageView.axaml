@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:users="clr-namespace:TDHK.Common.ViewModels.Users;assembly=TDHK.Common"
+             xmlns:u="clr-namespace:TDHK.Common.Services.UserInformationService;assembly=TDHK.Common"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TDHK.Avalonia.Views.UserMessageView"
              x:DataType="users:UserMessageViewModel">
@@ -10,9 +11,60 @@
         <users:UserMessageViewModel/>
     </Design.DataContext>
     
-    <Border BorderThickness="0" CornerRadius="2" >
-        <!-- <Interaction.Behaviors> -->
-        <!--      -->
-        <!-- </Interaction.Behaviors> -->
+    <UserControl.Resources>
+        <!--#region Colours-->
+        <Color x:Key="SuccessBackground">#d4edda</Color>
+        <Color x:Key="SuccessForeground">#155724</Color>
+
+        <Color x:Key="InformationBackground">#d1ecf1</Color>
+        <Color x:Key="InformationForeground">#0c5460</Color>
+
+        <Color x:Key="WarningBackground">#fff3cd</Color>
+        <Color x:Key="WarningForeground">#856404</Color>
+
+        <Color x:Key="ErrorBackground">#f8d7da</Color>
+        <Color x:Key="ErrorForeground">#721c24</Color>
+        <!--#endregion-->
+
+        <!--#region Brushes-->
+        <SolidColorBrush x:Key="SuccessBackgroundBrush" Color="{StaticResource SuccessBackground}" />
+        <SolidColorBrush x:Key="SuccessForegroundBrush" Color="{StaticResource SuccessForeground}" />
+
+        <SolidColorBrush x:Key="InformationBackgroundBrush" Color="{StaticResource InformationBackground}" />
+        <SolidColorBrush x:Key="InformationForegroundBrush" Color="{StaticResource InformationForeground}" />
+
+        <SolidColorBrush x:Key="WarningBackgroundBrush" Color="{StaticResource WarningBackground}" />
+        <SolidColorBrush x:Key="WarningForegroundBrush" Color="{StaticResource WarningForeground}" />
+
+        <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{StaticResource ErrorBackground}" />
+        <SolidColorBrush x:Key="ErrorForegroundBrush" Color="{StaticResource ErrorForeground}" />
+        <!--#endregion-->
+    </UserControl.Resources>
+    
+    <Border BorderThickness="0" CornerRadius="2" Tag="{Binding InformationType}">
+        <Interaction.Behaviors>
+            <EventTriggerBehavior EventName="MouseEnter">
+                <InvokeCommandAction Command="{Binding PauseTimerCommand}"/>
+            </EventTriggerBehavior>
+            <EventTriggerBehavior EventName="MouseLeave">
+                <InvokeCommandAction Command="{Binding UnpauseTimerCommand}"/>
+            </EventTriggerBehavior>
+        </Interaction.Behaviors>
+        <Border.Theme>
+            <ControlTheme TargetType="Border">
+                <Style Selector="^[Tag=u|InformationType.Error]">
+                    <Setter Property="Background" Value="{StaticResource ErrorBackgroundBrush}"/>
+                </Style>
+                <Style Selector="^[Tag=u|InformationType.Warning]">
+                    <Setter Property="Background" Value="{StaticResource WarningBackgroundBrush}"/>
+                </Style>
+                <Style Selector="^[Tag=u|InformationType.Success]">
+                    <Setter Property="Background" Value="{StaticResource SuccessBackgroundBrush}"/>
+                </Style>
+                <Style Selector="^[Tag=u|InformationType.Information]">
+                    <Setter Property="Background" Value="{StaticResource InformationBackgroundBrush}"/>
+                </Style>
+            </ControlTheme>
+        </Border.Theme>
     </Border>
 </UserControl>

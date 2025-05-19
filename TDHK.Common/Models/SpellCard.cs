@@ -1,4 +1,6 @@
-﻿namespace TDHK.Common.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace TDHK.Common.Models;
 
 public enum SpellCardTiming
 {

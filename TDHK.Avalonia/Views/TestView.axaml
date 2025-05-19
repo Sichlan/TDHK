@@ -1,0 +1,34 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TDHK.Avalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TDHK.Avalonia.Views.TestView"
+             x:DataType="viewModels:TestViewModel">
+    <Grid RowDefinitions="Auto,*">
+        <Menu Grid.Row="0">
+            <MenuItem Header="Populate" Command="{Binding PopulateCommand}"/>
+            <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+            <MenuItem Header="Fire Updates" Command="{Binding FireUpdatesCommand}"/>
+        </Menu>
+        
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding Children}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Canvas VerticalAlignment="Top" HorizontalAlignment="Left"
+                            Margin="{Binding Margin}"
+                            Height="{Binding Height}"
+                            Width="{Binding Width}"
+                            Background="{Binding Background}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

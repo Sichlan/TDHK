@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace TDHK.Common.Models;
 
-public abstract class ObservableObject : INotifyPropertyChanged
+public abstract class AAA : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
 

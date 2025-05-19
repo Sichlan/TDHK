@@ -18,6 +18,9 @@ public class UserMessageViewModel : ViewModelBase
 
     private readonly IUserInformationMessageService _userInformationMessageService;
 
+    [Obsolete("Designer Only")]
+    public UserMessageViewModel() : this("Test message", InformationType.Information, null, "Some more information for the test message", null) { }
+
     public UserMessageViewModel(string message, InformationType type, int? deleteAfter, string messageDetails,
         IUserInformationMessageService userInformationMessageService)
     {

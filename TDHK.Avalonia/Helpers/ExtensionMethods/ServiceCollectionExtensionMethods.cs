@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensionMethods
         // View Models
         s.AddSingleton<MainWindowViewModel>();
         s.AddSingleton<TDHKCharacterSheetViewModel>();
+        s.AddSingleton<TestViewModel>();
 
         // Services
         s.AddSingleton<INavigationService, NavigationService>();

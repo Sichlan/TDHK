@@ -1,4 +1,5 @@
-﻿using TDHK.Common.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using TDHK.Common.Models;
 
 namespace TDHK.Common.ViewModels;
 

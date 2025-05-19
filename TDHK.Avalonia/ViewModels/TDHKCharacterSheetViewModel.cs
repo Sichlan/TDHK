@@ -1,16 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Newtonsoft.Json;
 using ReactiveUI;
+using TDHK.Avalonia.Helpers.Attributes;
 using TDHK.Common.Models;
 
 namespace TDHK.Avalonia.ViewModels;
 
+[NavigableMenuItem("TDHK Sheet", "PersonBoardRegular")]
 public class TDHKCharacterSheetViewModel : NavigableViewModel
 {
     private Character _currentCharacter;
