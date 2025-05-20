@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+      <PackageReference Include="DynamicData" Version="9.1.2" />
     </ItemGroup>
 
 </Project>

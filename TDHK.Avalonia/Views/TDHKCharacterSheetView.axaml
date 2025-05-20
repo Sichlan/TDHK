@@ -50,28 +50,12 @@
             <sys:Int16>0</sys:Int16>
             <sys:Int16>0</sys:Int16>
         </collections:ArrayList>
-        
-        <converters:DisableAbilitySelectionConverter x:Key="DisableAbilitySelectionConverter"/>
     
         <ControlTheme x:Key="StatTextBlockStyle" TargetType="TextBlock">
             <Setter Property="Margin" Value="5" />
             <Setter Property="FontSize" Value="24" />
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}"/>
-        </ControlTheme>
-        
-        <ControlTheme x:Key="DisableAbilitySelectionItemStyle" TargetType="ComboBoxItem"
-                      x:DataType="sys:String">
-            <Setter Property="IsHitTestVisible">
-                <Setter.Value>
-                    <MultiBinding Converter="{StaticResource DisableAbilitySelectionConverter}">
-                        <Binding />
-                        <Binding Path="$parent[views:TDHKCharacterSheetView].((viewModels:TDHKCharacterSheetViewModel)DataContext).CurrentCharacter.DanmakuProperty" />
-                        <Binding Path="$parent[views:TDHKCharacterSheetView].((viewModels:TDHKCharacterSheetViewModel)DataContext).CurrentCharacter.DodgeProperty" />
-                        <Binding Path="$parent[views:TDHKCharacterSheetView].((viewModels:TDHKCharacterSheetViewModel)DataContext).CurrentCharacter.AbilityProperty"/>
-                    </MultiBinding>
-                </Setter.Value>
-            </Setter>
         </ControlTheme>
         
         <ControlTheme TargetType="Border" x:Key="AttackRangeBorderStyle">
@@ -149,19 +133,16 @@
             <TextBlock Grid.Row="5" Grid.Column="2" Theme="{StaticResource StatTextBlockStyle}"
                        Text="{Binding CurrentCharacter.Movement, FallbackValue=MOV 0, StringFormat={}MOV {0}}" />
             <ComboBox Grid.Row="4" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
-                      ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
+                      ItemsSource="{Binding CurrentCharacter.DanmakuProperties}"
                       SelectedItem="{Binding CurrentCharacter.DanmakuProperty}"
-                      ItemContainerTheme="{StaticResource DisableAbilitySelectionItemStyle}"
                       IsEnabled="{Binding !CurrentCharacter.IsPlayMode}"/>
             <ComboBox Grid.Row="4" Grid.Column="3" Margin="5" HorizontalAlignment="Stretch"
-                      ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
+                      ItemsSource="{Binding CurrentCharacter.DodgeProperties}"
                       SelectedItem="{Binding CurrentCharacter.DodgeProperty}"
-                      ItemContainerTheme="{StaticResource DisableAbilitySelectionItemStyle}"
                       IsEnabled="{Binding !CurrentCharacter.IsPlayMode}"/>
             <ComboBox Grid.Row="5" Grid.Column="1" Margin="5" HorizontalAlignment="Stretch"
-                      ItemsSource="{Binding Source={x:Static models:Character.CoreAbilities}}"
+                      ItemsSource="{Binding CurrentCharacter.AbilityProperties}"
                       SelectedItem="{Binding CurrentCharacter.AbilityProperty}"
-                      ItemContainerTheme="{StaticResource DisableAbilitySelectionItemStyle}"
                       IsEnabled="{Binding !CurrentCharacter.IsPlayMode}"/>
             
             <TextBlock Grid.Row="6" Grid.Column="0" Margin="5" Text="Attack Range" />

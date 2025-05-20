@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DynamicData;
+using DynamicData.Binding;
 
 namespace TDHK.Common.Models;
 
@@ -27,17 +29,17 @@ public partial class Character : ObservableValidator
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Danmaku))]
     [Required]
-    private string _danmakuProperty = "";
+    private string _danmakuProperty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Dodge))]
     [Required]
-    private string _dodgeProperty = "";
+    private string _dodgeProperty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Ability))]
     [Required]
-    private string _abilityProperty = "";
+    private string _abilityProperty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Lives))]
@@ -209,12 +211,34 @@ public partial class Character : ObservableValidator
     [JsonIgnore]
     public int AbilityTargetNumber => ((int?)AbilityCategory ?? 0) + ((int?)AbilityTarget ?? 0) + ((int?)AbilityRange ?? 0) - AbilityTargetNumberDiscount;
 
+    [ObservableProperty]
+    [property: JsonIgnore]
+    private ObservableCollection<string> _danmakuProperties;
+
+    [ObservableProperty]
+    [property: JsonIgnore]
+    private ObservableCollection<string> _dodgeProperties;
+
+    [ObservableProperty]
+    [property: JsonIgnore]
+    private ObservableCollection<string> _abilityProperties;
+
     public Character()
     {
         SpellCards = [];
+
+        // oh yeah
+        this.WhenAnyPropertyChanged(nameof(DodgeProperty), nameof(AbilityProperty)).Subscribe(x => { DanmakuProperties = new ObservableCollection<string>(CoreAbilities.Where(s => s == "" || (s != DodgeProperty && s != AbilityProperty))); });
+        this.WhenAnyPropertyChanged(nameof(DanmakuProperty), nameof(AbilityProperty)).Subscribe(x => { DodgeProperties = new ObservableCollection<string>(CoreAbilities.Where(s => s == "" || (s != DanmakuProperty && s != AbilityProperty))); });
+        this.WhenAnyPropertyChanged(nameof(DanmakuProperty), nameof(DodgeProperty)).Subscribe(x => { AbilityProperties = new ObservableCollection<string>(CoreAbilities.Where(s => s == "" || (s != DanmakuProperty && s != DodgeProperty))); });
+
+        DanmakuProperties = new ObservableCollection<string>(CoreAbilities.Where(s => s == "" || (s != DodgeProperty && s != AbilityProperty)));
+        DodgeProperties = new ObservableCollection<string>(CoreAbilities.Where(s => s == "" || (s != DanmakuProperty && s != AbilityProperty)));
+        AbilityProperties = new ObservableCollection<string>(CoreAbilities.Where(s => s == "" || (s != DanmakuProperty && s != DodgeProperty)));
     }
 
     [RelayCommand(CanExecute = nameof(CanFinishCharacterCreation))]
+    [property: JsonIgnore]
     private void FinishCharacterCreation()
     {
         IsPlayMode = true;
@@ -248,12 +272,12 @@ public partial class Character : ObservableValidator
 
 
     // ReSharper disable once CollectionNeverQueried.Global
-    public static readonly ReadOnlyCollection<string> CoreAbilities = new(new List<string>()
-    {
+    public static readonly ObservableCollectionExtended<string> CoreAbilities =
+    [
         "",
         "STR",
         "INS",
         "INT",
         "CHA"
-    });
+    ];
 }
